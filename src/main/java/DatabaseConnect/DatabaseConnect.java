@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 import Graph.*;
 
-public class DatabaseConnect
+public class DatabaseConnect implements IDatabaseConnect
 {
     private Connection conn = null;
 
@@ -19,7 +19,7 @@ public class DatabaseConnect
         try
         {
             Class.forName("org.sqlite.JDBC");//Specify the SQLite Java driver
-            conn = DriverManager.getConnection("jdbc:sqlite:AQA Movie DB.db");//Specify the database, since relative in the main project folder
+            conn = DriverManager.getConnection("jdbc:sqlite:connections.db");//Specify the database, since relative in the main project folder
             conn.setAutoCommit(false);// Important as you want control of when data is written
             System.out.println("Opened database successfully");
         } catch (Exception e)
@@ -29,6 +29,7 @@ public class DatabaseConnect
         }
     }
     
+    @Override
     public void close() 
     {
         try
@@ -41,6 +42,7 @@ public class DatabaseConnect
         }
     }
 
+    @Override
     public boolean loadGraph(Graph graph)
     {
         boolean success = false;
@@ -50,21 +52,17 @@ public class DatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM AdjacencyList;");
-            System.out.println("DB AdjacencyList queried successfully");
+            rs = stmt.executeQuery("SELECT * FROM Connections;");
 
             while(rs.next())
             {
-                int weight = rs.getInt("Weight");
-                System.out.println("Weight: " + weight);
-                int sourceNodeID = rs.getInt("ToCustomerID");
-                String sourceNodeName = selectCustomer(sourceNodeID).Name();
-                System.out.println("ToCustomer name retrieved: " + sourceNodeName);
-                int endNodeID = rs.getInt("FromCustomerID");
-                String endNodeName = selectCustomer(endNodeID).Name();
-                System.out.println("FromCustomer name retrieved: " + endNodeName);
-                graph.add(sourceNodeName, endNodeName, weight);
+                int weight = rs.getInt("RelationshipStrength");// TODO: update db to actually have relationship strength field
+                int sourceNodeID = rs.getInt("FriendCodeFrom");
+                String sourceNodeName = selectUser(sourceNodeID).Name();
+                int endNodeID = rs.getInt("FriendCodeTo");
+                String endNodeName = selectUser(endNodeID).Name();
 
+                graph.add(sourceNodeName, endNodeName, weight);
                 System.out.println("Adding node: " + sourceNodeName + " " + weight + " " + endNodeName + "\n");
             }
 
@@ -72,7 +70,8 @@ public class DatabaseConnect
             conn.commit();
             success = true;
             System.out.println("Graph loaded successfully");
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
@@ -80,7 +79,64 @@ public class DatabaseConnect
         return success;
     }
 
-    public boolean addEdge(int from, int to, int weight)
+    //helper to return a customer object given an int FriendCode //overloaded
+    @Override
+    public User selectUser(int FriendCode)
+    {
+        Statement stmt = null;
+        ResultSet rs = null;
+        User user = null;
+
+        try
+        {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM User WHERE FriendCode = '" + FriendCode + "';");
+            String Name = rs.getString("Name");
+            int CompanyID = rs.getInt("CompanyID");
+            
+            user = new User(FriendCode, Name, CompanyID);
+            
+            rs.close();
+            stmt.close();
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return user;
+    }
+
+    //helper to return a user given a string email and password //overloaded
+    public User selectUser(String Email, String Password) // TODO
+    {
+        Statement stmt = null;
+        ResultSet rs = null;
+        User user = null;
+
+        try
+        {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM User WHERE Email = '" + Email + "';");// TODO: make sql query
+            Integer FriendCode = rs.getInt("FriendCode");
+            String Name = rs.getString("Name");
+            int companyID = rs.getInt("FriendCode");
+
+            user = new User(FriendCode, Name, companyID);
+
+            rs.close();
+            stmt.close();
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return user;
+    }
+
+    @Override
+    public boolean addUser(User user)
     {
         boolean success = false;
         Statement stmt = null;
@@ -88,10 +144,8 @@ public class DatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            String sql = "INSERT INTO AdjacencyList (FromCustomerID, Weight, ToCustomerID) "
-                    //+ "VALUES ('" + from.ID() +"', " + weight + ", '" + to.ID() + "');";
-            + "VALUES (" + from + ", " + weight + ", " + to + ");";
-
+            String sql = "INSERT INTO User (FriendCode,Name,CompanyID) "
+                        + "VALUES ('" + user.FriendCode() +"', '" + user.Name() + "', '" + user.CompanyID() + "');";
             stmt.executeUpdate(sql);
 
             stmt.close();
@@ -106,95 +160,8 @@ public class DatabaseConnect
         return success;
     }
 
-    //helper to return a customer object given an int ID //overloaded
-    public Customer selectCustomer(int ID)
-    {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Customer customer = null;
-
-        try
-        {
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM Customer WHERE ID = '" + ID + "';");
-            String CustomerName = rs.getString("CustomerName");
-            String HouseNumber = rs.getString("HouseNumber");
-            Integer Postcode = rs.getInt("Postcode");
-            String PhoneNumber = rs.getString("PhoneNumber");
-            String DateOfBirth = rs.getString("DateOfBirth");
-
-            String CustomerAddress = HouseNumber + ", " + Postcode;
-            customer = new Customer(ID, CustomerName, PhoneNumber, DateOfBirth, CustomerAddress);
-
-            rs.close();
-            stmt.close();
-        }
-        catch (SQLException e)
-        {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-
-        return customer;
-    }
-
-    //helper to return a customer object given a string name //overloaded
-    public Customer selectCustomer(String name)
-    {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Customer customer = null;
-
-        try
-        {
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM Customer WHERE CustomerName = '" + name + "';");
-            Integer ID = rs.getInt("ID");
-            String CustomerName = rs.getString("CustomerName");
-            String HouseNumber = rs.getString("HouseNumber");
-            Integer Postcode = rs.getInt("Postcode");
-            String PhoneNumber = rs.getString("PhoneNumber");
-            String DateOfBirth = rs.getString("DateOfBirth");
-
-            String CustomerAddress = HouseNumber + ", " + Postcode;
-            customer = new Customer(ID, CustomerName, PhoneNumber, DateOfBirth, CustomerAddress);
-
-            rs.close();
-            stmt.close();
-        }
-        catch (SQLException e)
-        {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-
-        return customer;
-    }
-
-    public Movie selectMovie(String title)
-    {
-        Statement stmt = null;
-        ResultSet rs = null;
-        Movie movie = null;
-
-        try
-        {
-            stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT ID FROM Movie WHERE Title = '" + title + "';");
-            Integer ID = rs.getInt("ID");
-
-            movie = new Movie(ID, title);
-
-            rs.close();
-            stmt.close();
-        }
-        catch (SQLException e)
-        {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-
-        return movie;
-    }
-
-    public boolean addCustomer(Customer customer)
+    @Override
+    public boolean deleteUser(User user)
     {
         boolean success = false;
         Statement stmt = null;
@@ -202,55 +169,8 @@ public class DatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            String sql = "INSERT INTO Customer (CustomerName,HouseNumber,Postcode,PhoneNumber,DateOfBirth) "
-                        + "VALUES ('" + customer.Name() +"', " + customer.HouseNumber() + ", '" + customer.Postcode() + "', '" + customer.PhoneNumber() + "', '" + customer.DateOfBirth() + "');";
-            stmt.executeUpdate(sql);
-
-            stmt.close();
-            conn.commit();
-            success = true;
-            System.out.println("Insert successful");
-        } catch (Exception e)
-        {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-
-        return success;
-    }
-
-    public boolean modifyCustomer(Customer customer)
-    {
-        boolean success = false;
-        Statement stmt = null;
-
-        try
-        {
-            stmt = conn.createStatement();
-            String sql = "UPDATE Customer SET HouseNumber= " + customer.HouseNumber() + ", Postcode = '" + customer.Postcode() + "' WHERE CustomerName = '" + customer.Name()  + "';";
-            stmt.executeUpdate(sql);
-
-            stmt.close();
-            conn.commit();
-            success = true;
-            System.out.println("Update successful");
-        } catch (Exception e)
-        {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-        }
-
-        return success;
-    }
-
-    public boolean deleteCustomer(Customer customer)
-    {
-        boolean success = false;
-        Statement stmt = null;
-
-        try
-        {
-            stmt = conn.createStatement();
-            String sql = "DELETE FROM Customer "
-                        + "WHERE CustomerName = '" + customer.Name() + "';";
+            String sql = "DELETE FROM User "// TODO: make query // TODO: make sql clean up email/password entries aswell
+                        + "WHERE CustomerName = '" + user.Name() + "';";
             stmt.executeUpdate(sql);
 
             stmt.close();
@@ -265,7 +185,8 @@ public class DatabaseConnect
         return success;
     }
 
-    public boolean addRental(MovieRental rental)
+    @Override
+    public boolean addConnection(int from, int to, int weight)
     {
         boolean success = false;
         Statement stmt = null;
@@ -273,8 +194,9 @@ public class DatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            String sql = "INSERT INTO MovieRental (CustomerID,MovieID,RentalDate) "
-                    + "VALUES (" + rental.CustomerID() +", " + rental.MovieID() + ", '" + rental.RentalDate() + "');";
+            String sql = "INSERT INTO Connections (FriendCodeFrom, FriendCodeTo, RelationshipStrength)"// TODO: update db, sql, ddl, documentation
+            + "VALUES (" + from + ", " + to + ", " + weight + ");";
+
             stmt.executeUpdate(sql);
 
             stmt.close();
@@ -286,65 +208,50 @@ public class DatabaseConnect
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return success;
+        return success;    
     }
 
-    public boolean displayOverdueFees(Customer customer)
+    @Override
+    public boolean deleteConnection(int from, int to) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'deleteConnection'");
+    }
+
+    @Override
+    public boolean modifyPassword(int FriendCode, String newPassword) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'modifyPassword'");
+    }
+
+    @Override
+    public boolean modifyEmail(int FriendCode, String newEmail) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'modifyEmail'");
+    }
+
+    @Override
+    public boolean modifyName(int FriendCode, String newName) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'modifyName'");
+    }
+
+    @Override
+    public boolean addCompany(Company company)
     {
         boolean success = false;
         Statement stmt = null;
-        ResultSet rs = null;
 
         try
         {
             stmt = conn.createStatement();
-            String sql = "SELECT CustomerID, MovieID, RentalDate," +
-                    "    julianday('now') - julianday(RentalDate) AS DaysRented," +
-                    "    BuyPrice AS MoviePrice," +
-                    "    Duration AS AllowedDuration," +
-                    "    CASE " +
-                    "        WHEN (julianday('now') - julianday(RentalDate)) > Duration THEN " +
-                    "            ROUND((julianday('now') - julianday(RentalDate) - Duration),0)" +
-                    "        ELSE 0" +
-                    "    END AS OverdueDays," +
-                    "    CASE " +
-                    "        WHEN (julianday('now') - julianday(RentalDate) - Duration) < 7 THEN " +
-                    "            ROUND((FeeUnderOneWeek * BuyPrice),2)" +
-                    "        WHEN (julianday('now') - julianday(RentalDate) - Duration) >= 7 THEN " +
-                    "            ROUND((FeeOneWeekOrMore * BuyPrice),2)" +
-                    "        ELSE 0" +
-                    "    END AS OverdueFee" +
-                    "    FROM MovieRental, Movie, OverdueFee, Customer" +
-                    "    WHERE MovieID = Movie.ID AND" +
-                    "        Movie.Rating = OverdueFee.Rating AND" +
-                    "        (julianday('now') - julianday(RentalDate)) > Duration AND" +
-                    "        CustomerName = '" + customer.Name() + "';";
-
-            rs = stmt.executeQuery(sql);
-            System.out.print("CustomerID" +
-                    "  |  " + "MovieID" +
-                    "  |  " + "RentalDate" +
-                    "  |  " + "MoviePrice" +
-                    "  |  " + "AllowedDuration" +
-                    "  |  " + "OverdueDays" +
-                    "  |  " + "OverdueFee" +
-                    "  |  ");
-            System.out.println();
-
-            //System.out.println(rs.getInt("ID"));
-            System.out.print(rs.getInt("CustomerID") + "           |  ");
-            System.out.print(rs.getInt("MovieID") + "        |  ");
-            System.out.print(rs.getString("RentalDate") + "  |  ");
-            System.out.print(rs.getInt("MoviePrice") + "          |  ");
-            System.out.print(rs.getInt("AllowedDuration") + "                |  ");
-            System.out.print(rs.getInt("OverdueDays") + "         |  ");
-            System.out.print(rs.getInt("OverdueFee") + "           |  ");
-            System.out.println();
+            String sql = "INSERT INTO Company (ID,Name,IndustryID) "
+                    + "VALUES (" + company.ID() +", " + company.Name() + ", '" + company.IndustryID() + "');";
+            stmt.executeUpdate(sql);
 
             stmt.close();
             conn.commit();
             success = true;
-            System.out.println("Display successful");
+            System.out.println("Insert successful");
         } catch (Exception e)
         {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
