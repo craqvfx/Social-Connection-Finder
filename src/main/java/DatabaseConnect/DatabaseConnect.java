@@ -19,7 +19,7 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             Class.forName("org.sqlite.JDBC");//Specify the SQLite Java driver
-            conn = DriverManager.getConnection("jdbc:sqlite:connections.db");//Specify the database, since relative in the main project folder
+            conn = DriverManager.getConnection("jdbc:sqlite:src/main/resources/connections.db");//Specify the database, since relative in the main project folder
             conn.setAutoCommit(false);// Important as you want control of when data is written
             System.out.println("Opened database successfully");
         } catch (Exception e)
