@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,9 +59,9 @@ public class DatabaseConnect implements IDatabaseConnect
             {
                 int weight = rs.getInt("RelationshipStrength");
                 int sourceNodeID = rs.getInt("FriendCodeFrom");
-                String sourceNodeName = selectUser(sourceNodeID).Name();
+                String sourceNodeName = getUser(sourceNodeID).Name();
                 int endNodeID = rs.getInt("FriendCodeTo");
-                String endNodeName = selectUser(endNodeID).Name();
+                String endNodeName = getUser(endNodeID).Name();
 
                 graph.add(sourceNodeName, endNodeName, weight);
                 System.out.println("Adding node: " + sourceNodeName + " " + weight + " " + endNodeName + "\n");
@@ -81,7 +82,7 @@ public class DatabaseConnect implements IDatabaseConnect
 
     //helper to return a customer object given an int FriendCode //overloaded
     @Override
-    public User selectUser(int FriendCode)
+    public User getUser(int FriendCode)
     {
         Statement stmt = null;
         ResultSet rs = null;
@@ -108,7 +109,7 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     //helper to return a user given a string email and password //overloaded
-    public User selectUser(String Email, String Password) // TODO
+    public User getUser(String Email, String Password) // TODO
     {
         Statement stmt = null;
         ResultSet rs = null;
@@ -258,5 +259,17 @@ public class DatabaseConnect implements IDatabaseConnect
         }
 
         return success;
+    }
+
+    @Override
+    public ArrayList<User> getUsers(String industry) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUsers'");
+    }
+
+    @Override
+    public ArrayList<User> getUsers(Integer companyID) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getUsers'");
     }
 }

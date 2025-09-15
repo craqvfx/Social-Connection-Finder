@@ -1,5 +1,7 @@
 package DatabaseConnect;
 
+import java.util.ArrayList;
+
 import Graph.Graph;
 
 public interface IDatabaseConnect 
@@ -7,11 +9,11 @@ public interface IDatabaseConnect
     public void close();
     public boolean loadGraph(Graph graph);
 
-    public User selectUser(int FriendCode);
-    public User selectUser(String Email, String Password);
+    public User getUser(int FriendCode);
+    public User getUser(String Email, String Password);
     
     public boolean addUser(User user);
-    public boolean deleteUser(int FriendCode);
+    public boolean deleteUser(User user);
 
     public boolean addConnection(int from, int to, int weight);
     public boolean deleteConnection(int from, int to);
@@ -22,6 +24,6 @@ public interface IDatabaseConnect
 
     public boolean addCompany(Company company);
 
-
-
+    public ArrayList<User> getUsers(String industry);
+    public ArrayList<User> getUsers(Integer companyID);
 }
