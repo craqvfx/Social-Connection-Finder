@@ -56,7 +56,7 @@ public class DatabaseConnect implements IDatabaseConnect
 
             while(rs.next())
             {
-                int weight = rs.getInt("RelationshipStrength");// TODO: update db to actually have relationship strength field
+                int weight = rs.getInt("RelationshipStrength");
                 int sourceNodeID = rs.getInt("FriendCodeFrom");
                 String sourceNodeName = selectUser(sourceNodeID).Name();
                 int endNodeID = rs.getInt("FriendCodeTo");
@@ -194,7 +194,7 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            String sql = "INSERT INTO Connections (FriendCodeFrom, FriendCodeTo, RelationshipStrength)"// TODO: update db, sql, ddl, documentation
+            String sql = "INSERT INTO Connections (FriendCodeFrom, FriendCodeTo, RelationshipStrength)"// TODO: update sql, documentation
             + "VALUES (" + from + ", " + to + ", " + weight + ");";
 
             stmt.executeUpdate(sql);

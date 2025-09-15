@@ -26,7 +26,8 @@ CREATE TABLE LoginInfo (
  
 CREATE TABLE Connections ( 
     FriendCodeFrom INTEGER NOT NULL, 
-    FriendCodeTo INTEGER NOT NULL, 
+    FriendCodeTo INTEGER NOT NULL,
+    RelationshipStrength INTEGER NOT NULL,
     PRIMARY KEY (FriendCodeFrom, FriendCodeTo), 
     FOREIGN KEY (FriendCodeFrom) REFERENCES User(FriendCode), 
     FOREIGN KEY (FriendCodeTo) REFERENCES User(FriendCode) 
