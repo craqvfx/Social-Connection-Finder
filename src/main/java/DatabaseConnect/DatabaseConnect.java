@@ -289,9 +289,29 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public boolean modifyName(int FriendCode, String newName) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'modifyName'");
+    public boolean modifyName(int FriendCode, String NewName)
+    {
+        boolean success = false;
+        Statement stmt = null;
+
+        try
+        {
+            stmt = conn.createStatement();
+            String sql = "UPDATE User"
+            + " SET Name = " + NewName
+            + " WHERE FriendCode = " + FriendCode + ";";
+            stmt.executeUpdate(sql);
+
+            stmt.close();
+            conn.commit();
+            success = true;
+            System.out.println("Update successful");
+        } catch (Exception e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return success;
     }
 
     @Override
