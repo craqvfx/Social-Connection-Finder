@@ -24,6 +24,6 @@ public interface IDatabaseConnect
 
     public boolean addCompany(Company company);
 
-    public ArrayList<User> getUsers(String industry);
+    public ArrayList<User> getUsers(int IndustryID);
     public ArrayList<User> getUsers(Integer companyID);
 }

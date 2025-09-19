@@ -340,10 +340,40 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public ArrayList<User> getUsers(String industry) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsers'");
-    }
+    public ArrayList<User> getUsers(int IndustryID)
+    {
+        Statement stmt = null;
+        ResultSet rs = null;
+        User user = null;
+        ArrayList <User> userList = new ArrayList<User>();
+
+        try
+        {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT FriendCode"
+            + " FROM User, Company, Industry"
+            + " WHERE User.CompanyID = Company.ID"
+            + " AND Company.IndustryID = " + IndustryID + ";");
+
+            while(rs.next())
+            {
+                String Name = rs.getString("Name");
+                int CompanyID = rs.getInt("CompanyID");
+                int FriendCode = rs.getInt("FriendCode");
+                user = new User(FriendCode, Name, CompanyID);
+                userList.add(user);
+            }
+            
+            rs.close();
+            stmt.close();
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return userList;
+        }
 
     @Override
     public ArrayList<User> getUsers(Integer companyID) {
