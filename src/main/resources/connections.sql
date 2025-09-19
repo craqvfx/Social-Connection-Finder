@@ -66,13 +66,10 @@ VALUES (" + CompanyName + ", (SELECT ID FROM Industry WHERE Industry = " + Indus
 --Get all the Friend Codes of people who work in a specified industry:
 SELECT FriendCode
 FROM User, Company, Industry
-WHERE FriendCode = " + FriendCode + "
-  AND User.CompanyID = Company.ID
-  AND Company.IndustryID = Industry.ID
-  AND Industry.Industry = " + IndustryName + ";
+WHERE User.CompanyID = Company.ID
+  AND Company.IndustryID = " + IndustryID + ";
 
 --Get all the Friend Codes of people who work at a specified company: 
 SELECT FriendCode
 FROM User, Company
-WHERE FriendCode = " + FriendCode + "
-  AND User.CompanyID = " + CompanyID + ";
+WHERE User.CompanyID = " + CompanyID + ";
