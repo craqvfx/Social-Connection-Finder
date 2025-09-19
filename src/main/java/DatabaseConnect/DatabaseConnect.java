@@ -166,12 +166,17 @@ public class DatabaseConnect implements IDatabaseConnect
     {
         boolean success = false;
         Statement stmt = null;
+        int FriendCode = user.FriendCode();
 
         try
         {
             stmt = conn.createStatement();
-            String sql = "DELETE FROM User "// TODO: make query // TODO: make sql clean up email/password entries aswell
-                        + "WHERE CustomerName = '" + user.Name() + "';";
+            String sql = "DELETE FROM Connections"
+            + " WHERE FriendCodeFrom = " + FriendCode + " OR FriendCodeTo = " + FriendCode + ";"
+            + " DELETE FROM LoginInfo"
+            + " WHERE FriendCode = " + FriendCode + ";"
+            + " DELETE FROM User"
+            + " WHERE FriendCode = " + FriendCode + ";";
             stmt.executeUpdate(sql);
 
             stmt.close();
