@@ -213,9 +213,27 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public boolean deleteConnection(int from, int to) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteConnection'");
+    public boolean deleteConnection(int from, int to)
+    {
+        boolean success = false;
+        Statement stmt = null;
+
+        try
+        {
+            stmt = conn.createStatement();
+            String sql = "DELETE FROM Connections WHERE FriendCodeFrom = " + from + ", FriendCodeTo = " + to + ";";
+            stmt.executeUpdate(sql);
+
+            stmt.close();
+            conn.commit();
+            success = true;
+            System.out.println("Delete successful");
+        } catch (Exception e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return success;    
     }
 
     @Override
