@@ -237,9 +237,29 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public boolean modifyPassword(int FriendCode, String newPassword) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'modifyPassword'");
+    public boolean modifyPassword(int FriendCode, String NewPassword)
+    {
+        boolean success = false;
+        Statement stmt = null;
+
+        try
+        {
+            stmt = conn.createStatement();
+            String sql = "UPDATE LoginInfo"
+            + " SET Password = " + NewPassword
+            + " WHERE FriendCode = " + FriendCode + ";";
+            stmt.executeUpdate(sql);
+
+            stmt.close();
+            conn.commit();
+            success = true;
+            System.out.println("Update successful");
+        } catch (Exception e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return success;
     }
 
     @Override
