@@ -109,7 +109,7 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     //helper to return a user given a string email and password //overloaded
-    public User getUser(String Email, String Password) // TODO
+    public User getUser(String Email, String Password)
     {
         Statement stmt = null;
         ResultSet rs = null;
@@ -118,7 +118,10 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM User WHERE Email = '" + Email + "';");// TODO: make sql query
+            rs = stmt.executeQuery("SELECT * FROM User, LoginInfo"
+            + " WHERE User.FriendCode = LoginInfo.FriendCode"
+            + "   AND LoginInfo.Email = " + Email
+            + "   AND LoginInfo.Password = " + Password + ";");
             Integer FriendCode = rs.getInt("FriendCode");
             String Name = rs.getString("Name");
             int companyID = rs.getInt("FriendCode");
