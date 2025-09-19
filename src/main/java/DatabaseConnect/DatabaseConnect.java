@@ -340,7 +340,7 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public ArrayList<User> getUsers(int IndustryID)
+    public ArrayList<User> getUsersByIndustry(int IndustryID)
     {
         Statement stmt = null;
         ResultSet rs = null;
@@ -373,11 +373,39 @@ public class DatabaseConnect implements IDatabaseConnect
         }
 
         return userList;
-        }
+    }
 
     @Override
-    public ArrayList<User> getUsers(Integer companyID) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsers'");
+    public ArrayList<User> getUsersByCompany(int CompanyID)
+    {
+        Statement stmt = null;
+        ResultSet rs = null;
+        User user = null;
+        ArrayList <User> userList = new ArrayList<User>();
+
+        try
+        {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT FriendCode"
+            + " FROM User, Company"
+            + " WHERE User.CompanyID = " + CompanyID + ";");
+
+            while(rs.next())
+            {
+                int FriendCode = rs.getInt("FriendCode");
+                String Name = rs.getString("Name");
+                user = new User(FriendCode, Name, CompanyID);
+                userList.add(user);
+            }
+            
+            rs.close();
+            stmt.close();
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return userList;
     }
 }
