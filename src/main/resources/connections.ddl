@@ -11,24 +11,24 @@ CREATE TABLE Company (
 ); 
  
 CREATE TABLE User ( 
-    FriendCode INTEGER PRIMARY KEY NOT NULL, 
+    ID INTEGER PRIMARY KEY NOT NULL, 
     Name VARCHAR(100) NOT NULL, 
     CompanyID INTEGER, 
     FOREIGN KEY (CompanyID) REFERENCES Company(ID) 
 ); 
  
 CREATE TABLE LoginInfo ( 
-    FriendCode INTEGER NOT NULL, 
+    ID INTEGER NOT NULL, 
     Email VARCHAR(100) NOT NULL UNIQUE, 
-    Password VARCHAR(100) NOT NULL, 
-    FOREIGN KEY (FriendCode) REFERENCES User(FriendCode) 
+    Password VARCHAR(100) NOT NULL,
+    FOREIGN KEY (ID) REFERENCES User(ID) 
 ); 
  
 CREATE TABLE Connections ( 
-    FriendCodeFrom INTEGER NOT NULL, 
-    FriendCodeTo INTEGER NOT NULL,
+    SourceID INTEGER NOT NULL, 
+    TargetID INTEGER NOT NULL,
     RelationshipStrength INTEGER NOT NULL,
-    PRIMARY KEY (FriendCodeFrom, FriendCodeTo), 
-    FOREIGN KEY (FriendCodeFrom) REFERENCES User(FriendCode), 
-    FOREIGN KEY (FriendCodeTo) REFERENCES User(FriendCode) 
-); 
+    PRIMARY KEY (SourceID, TargetID), 
+    FOREIGN KEY (SourceID) REFERENCES User(ID), 
+    FOREIGN KEY (TargetID) REFERENCES User(ID) 
+);

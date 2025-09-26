@@ -11,65 +11,65 @@ INSERT INTO Industry (Industry) VALUES ('Other');
 --Select all connections:
 SELECT * FROM Connections;
 
---Get a User's info given their Friend Code:
+--Get a User's info given their ID:
 SELECT * FROM User
-WHERE FriendCode = " + FriendCode + ";
+WHERE ID = " + ID + ";
 
 --Get a User's info given their Email and Password:
 SELECT * FROM User, LoginInfo
-WHERE User.FriendCode = LoginInfo.FriendCode
+WHERE User.ID = LoginInfo.ID
   AND LoginInfo.Email = " + Email + "
   AND LoginInfo.Password = " + Password + ";
 
---Add User, given FriendCode, Name, Company ID, Email, Password:
-INSERT INTO User (FriendCode, Name, CompanyID)
-VALUES (NULL, " + Name + ", (SELECT ID FROM Company WHERE Name = " + CompanyName + "));
-INSERT INTO LoginInfo (FriendCode, Email, Password)
+--Add User, given Name, Company ID, Email, Password:
+INSERT INTO User (Name, CompanyID)
+VALUES (" + Name + ", (SELECT ID FROM Company WHERE Name = " + CompanyName + "));
+INSERT INTO LoginInfo (ID, Email, Password)
 VALUES (LAST_INSERT_ID(), " + Email + ", " + Password + ");
 
---Delete User, given Friend Code:
+--Delete User, given ID:
 DELETE FROM Connections
-WHERE FriendCodeFrom = " + FriendCode + " OR FriendCodeTo = " + FriendCode + ";
+WHERE SourceID = " + ID + " OR TargetID = " + ID + ";
 DELETE FROM LoginInfo
-WHERE FriendCode = " + FriendCode + ";
+WHERE ID = " + ID + ";
 DELETE FROM User
-WHERE FriendCode = " + FriendCode + ";
+WHERE ID = " + ID + ";
 
---Add Connection, given from and to Friend Codes:
-INSERT INTO Connections (FriendCodeFrom, FriendCodeTo)
-VALUES (" + FriendCodeFrom + ", " + FriendCodeTo + ");
+--Add Connection, given source and target IDs:
+INSERT INTO Connections (SourceID, TargetID)
+VALUES (" + SourceID + ", " + TargetID + ");
 
---Delete Connection, given from and to Friend Codes:
+--Delete Connection, given source and target IDs:
 DELETE FROM Connections
-WHERE FriendCodeFrom = " + FriendCodeFrom + "
-  AND FriendCodeTo = " + FriendCodeTo + ";
+WHERE SourceID = " + SourceID + "
+  AND TargetID = " + TargetID + ";
 
---Modify Password, given Friend Code:
+--Modify Password, given ID:
 UPDATE LoginInfo
 SET Password = " + NewPassword + "
-WHERE FriendCode = " + FriendCode + ";
+WHERE LoginInfo.ID = " + ID + ";
 
---Modify Email, given Friend Code:
+--Modify Email, given ID:
 UPDATE LoginInfo
 SET Email = " + NewEmail + "
-WHERE FriendCode = " + FriendCode + ";
+WHERE LoginInfo.ID = " + ID + ";
 
---Modify Name, given Friend Code:
+--Modify Name, given ID:
 UPDATE User
 SET Name = " + NewName + "
-WHERE FriendCode = " + FriendCode + ";
+WHERE ID = " + ID + ";
 
 --Add Company, given Name and Industry:
 INSERT INTO Company (Name, IndustryID)
 VALUES (" + CompanyName + ", (SELECT ID FROM Industry WHERE Industry = " + IndustryName + "));
 
---Get all the Friend Codes of people who work in a specified industry:
-SELECT FriendCode
+--Get all the IDs of people who work in a specified industry:
+SELECT User.ID
 FROM User, Company, Industry
 WHERE User.CompanyID = Company.ID
   AND Company.IndustryID = " + IndustryID + ";
 
---Get all the Friend Codes of people who work at a specified company: 
-SELECT FriendCode
+--Get all the IDs of people who work at a specified company: 
+SELECT User.ID
 FROM User, Company
 WHERE User.CompanyID = " + CompanyID + ";
