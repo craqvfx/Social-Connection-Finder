@@ -4,29 +4,393 @@ import DatabaseConnect.*;
 import Dijkstra.*;
 import Graph.*;
 
+import java.util.Scanner;
+
+/*
+ * Main class to run the program.
+ * Handles user interface and interaction.
+ * Note: This class is a work in progress and some features are not yet implemented.
+ * Sparsely commented as most of the code is self-explanatory or simple (e.g. cli menus).
+ */
+
 public class Main
 {
     public static void main(String[] args)
     {
-        /*
-        DatabaseConnect conn = new DatabaseConnect();
-        conn.addEdge(1, 2, 7);
-        conn.addEdge(1, 4, 3);
-        conn.addEdge(2, 3, 3);
-        conn.addEdge(2, 4, 2);
-        conn.addEdge(2, 5, 6);
-        conn.addEdge(3, 4, 4);
-        conn.addEdge(3, 5, 1);
-        conn.addEdge(4, 5, 7);
-        System.out.println("All edges inserted.");
-        */
+        User user = WelcomeScreen();
+        HomeScreen(user);
+
         DatabaseConnect conn = new DatabaseConnect();
         Graph graph = new Graph();
         conn.loadGraph(graph);
+        conn.close();
         System.out.println(graph.toString());
         Dijkstra dijkstra = new Dijkstra(graph);
 
         dijkstra.printPath("John Smith", "Becky Jane");
         System.out.println("\nDistance: " + dijkstra.getDistance("John Smith", "Becky Jane") + "0km");
+    }
+
+    private static User WelcomeScreen()
+    {
+        Scanner in = new Scanner(System.in);
+        User user = null;
+        System.out.println("--- Welcome to the Social Network Connection Finder! ---");
+
+        int choice;
+        do
+        {
+            System.out.println("Please choose one of the following options by entering it's corresponding number:");
+            System.out.println("1 | Login");
+            System.out.println("2 | Register");
+            System.out.println("3 | Exit");
+            choice = in.nextInt();
+        } while(choice < 1 || choice > 3);
+
+        switch (choice)
+        {
+            case 1:
+                System.out.println("--- Login ---");
+                user = loginScreen();
+                break;
+            case 2:
+                System.out.println("--- Register ---");
+                registerScreen();
+                user = loginScreen(); // Asks user to login after registering
+                break;
+            case 3:
+                System.out.println("Exiting...");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Error: Invalid choice. Exiting...");
+                System.exit(1);
+        }
+
+        return user; //  Continues program after succesfull login
+    }
+
+    private static User loginScreen()
+    {
+        Scanner in = new Scanner(System.in);
+        String email;
+        String password;
+        User currentUser = null;
+        boolean success = false;
+        while(success == false)
+        {
+            do
+            {
+                System.out.println("Please enter your email:");
+                email = in.nextLine();
+            } while(email.isEmpty());   // nextLine() returns "" if enter is pressed with no input, therefore check for empty string instead of null
+
+            do
+            {
+                System.out.println("Please enter your password:");
+                password = in.nextLine();
+            } while(password.isEmpty());
+
+            try
+            {
+                DatabaseConnect conn = new DatabaseConnect();
+                currentUser = conn.getUser(email, password);
+                if(conn.IDExists("User", currentUser.ID()))
+                {
+                    System.out.println("Login successful!");
+                    success = true;
+                } else {
+                    System.out.println("Login failed: Email password combination not found.");
+                }
+                conn.close();
+            }
+            catch (Exception e)
+            {
+                System.out.println("Login failed: " + e.getMessage());
+            }
+        }
+        
+        return currentUser;
+    }
+
+    private static void registerScreen()
+    {
+        Scanner in = new Scanner(System.in);
+        String name;
+        String email;
+        String password;
+        boolean success = false;
+        while(success == false)
+        {
+            do
+            {
+                System.out.println("Please enter your name:");
+                name = in.nextLine();
+            } while(name.isEmpty());
+
+            do
+            {
+                System.out.println("Please enter your email:");
+                email = in.nextLine();
+            } while(email.isEmpty());
+
+            do
+            {
+                System.out.println("Please enter your password:");
+                password = in.nextLine();
+            } while(password.isEmpty());
+
+            register(name, email, password);
+            success = true; // If registration fails, an exception is thrown and this line is not reached
+        }
+    }
+
+    private static void register(String name, String email, String password)
+    {
+        User user = null;
+        try
+        {
+            user = new User(name, email, password);
+            DatabaseConnect conn = new DatabaseConnect();
+            boolean added = conn.addUser(user);
+            if (added) {
+                System.out.println("Registration successful!");
+            } else {
+                System.out.println("Registration failed: User not added.");
+            }
+            conn.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Registration failed: " + e.getMessage());
+        }
+    }
+    
+    private static User HomeScreen(User currentUser)
+    {
+        Scanner in = new Scanner(System.in);
+        System.out.println("--- Home ---");
+
+        int choice;
+        do
+        {
+            System.out.println("Please choose one of the following options by entering it's corresponding number:");
+            System.out.println("1 | Find Connections");
+            System.out.println("2 | Manage Connecions");
+            System.out.println("3 | Manage Account");
+            System.out.println("4 | Logout");
+            System.out.println("5 | Exit");
+            choice = in.nextInt();
+            in.nextLine();
+        } while(choice < 1 || choice > 5);
+
+        switch (choice)
+        {
+            case 1:
+                System.out.println("--- Find Connections ---");
+                findConnectionsScreen(currentUser);
+                break;
+            case 2:
+                System.out.println("--- Manage Connecions ---");
+                manageConnectionsScreen(currentUser);
+                break;
+            case 3:
+                System.out.println("--- Manage Account ---");
+                manageAccountScreen(currentUser);
+                break;
+            case 4:
+                System.out.println("Logging out user...");
+                System.exit(0);
+                break;
+            case 5:
+                System.out.println("Exiting...");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Error: Invalid choice. Exiting...");
+                System.exit(1);
+        }
+
+        HomeScreen(currentUser); // Loop back to home screen after completing an action
+        return currentUser;
+    }
+
+    static String[] findConnectionsScreen(User currentUser)
+    {
+        // TODO
+    }
+
+    static void manageConnectionsScreen(User currentUser)
+    {
+        Scanner in = new Scanner(System.in);
+
+        int choice;
+        do
+        {
+            System.out.println("Please choose one of the following options by entering it's corresponding number:");
+            System.out.println("1 | Add new Connection");
+            System.out.println("2 | Delete Connection");
+            System.out.println("3 | Exit");
+            choice = in.nextInt();
+        } while(choice < 1 || choice > 3);
+
+        switch (choice) // TODO: implement the following pseudocode
+        {
+            case 1:
+                System.out.println("--- Add new Connection ---");
+                // get user input for new connection
+                // call DatabaseConnect.addConnection(from, to, weight);
+                break;
+            case 2:
+                System.out.println("--- Delete Connection ---");
+                // output current connections
+                // get user input for connection to delete
+                // call DatabaseConnect.deleteConnection(from, to);
+                break;
+            case 3:
+                System.out.println("Exiting...");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Error: Invalid choice. Exiting...");
+                System.exit(1);
+        }
+    }
+
+    static void manageAccountScreen(User currentUser)
+    {
+        Scanner in = new Scanner(System.in);
+
+        int choice;
+        do
+        {
+            System.out.println("Please choose one of the following options by entering it's corresponding number:");
+            System.out.println("1 | Update Email");
+            System.out.println("2 | Update Password");
+            System.out.println("3 | Update Name");
+            System.out.println("4 | Update Company");
+            System.out.println("5 | Exit");
+            choice = in.nextInt();
+            in.nextLine(); // consume leftover newline
+        } while(choice < 1 || choice > 5);
+
+        DatabaseConnect conn = new DatabaseConnect();
+        switch (choice)
+        {
+            case 1:
+                System.out.println("--- Update Email ---");
+                String email;
+                do
+                {
+                    System.out.println("Please enter a new email:");
+                    email = in.nextLine();
+                } while(email.isEmpty());
+
+                conn.modifyEmail(currentUser.ID(), email);
+
+                currentUser.setEmail(email);
+                break;
+            case 2:
+                System.out.println("--- Update Password ---");
+                String password;
+                do
+                {
+                    System.out.println("Please enter a new password:");
+                    password = in.nextLine();
+                } while(password.isEmpty());
+                
+                conn.modifyPassword(currentUser.ID(), password);
+
+                currentUser.setPassword(password);
+                break;
+            case 3:
+                System.out.println("--- Update Name ---");
+                String name;
+                do
+                {
+                    System.out.println("Please enter a new name:");
+                    name = in.nextLine();
+                } while(name.isEmpty());
+
+                conn.modifyName(currentUser.ID(), name);
+
+                currentUser.setName(name);
+                break;
+            case 4:
+                System.out.println("--- Update Company ---");
+                int companyID;
+                do
+                {
+                    System.out.println("Please choose one of the following companies by entering it's corresponding number:");
+                    System.out.println("0 | Register new Company");
+
+                    String[] companyList = conn.getCompanyList();
+                    for(String company : companyList) 
+                    {
+                        System.out.println(company);
+                    }
+                    companyID = in.nextInt();
+                    in.nextLine(); // consume leftover newline
+                } while(!conn.IDExists("Company", companyID) && companyID != 0); // 0 is valid input to register a new company
+
+                if(companyID == 0)
+                {
+                    System.out.println("--- Register new Company ---");
+                    String companyName;
+                    int industryID;
+                    do
+                    {
+                        System.out.println("Please enter the new company's name:");
+                        companyName = in.nextLine();
+                    } while(companyName.isEmpty());
+
+                    do
+                    {
+                        System.out.println("Please choose one of the following industries by entering it's corresponding number:");
+                        
+                        String[] industryList = conn.getIndustryList();
+                        for(String industry : industryList) 
+                        {
+                            System.out.println(industry);
+                        }
+
+                        industryID = in.nextInt();
+                        in.nextLine(); // consume leftover newline
+
+                    } while(!conn.IDExists("industry", industryID));
+
+                    Company newCompany = null;
+                    try
+                    {
+                        newCompany = new Company(companyName, industryID);
+                        boolean added = conn.addCompany(newCompany);
+                        if (added) {
+                            companyID = conn.getMostRecentID("Company");
+                            System.out.println("Company registration successful!");
+                        } else {
+                            System.out.println("Company registration failed: Company not added.");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println("Company registration failed: " + e.getMessage());
+                    }
+                }
+
+                // no else is needed as after updating companyID if a new company was created, it auto selects the newly created company, if no new company was created, the user selected an existing company
+                conn.modifyCompanyID(currentUser.ID(), companyID);
+                currentUser.setCompanyID(companyID);
+
+                break;
+            case 5:
+                System.out.println("Exiting...");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Error: Invalid choice. Exiting...");
+                System.exit(1);
+        }
+
+        conn.close();
     }
 }
