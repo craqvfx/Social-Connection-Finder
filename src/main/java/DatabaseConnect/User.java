@@ -2,35 +2,42 @@ package DatabaseConnect;
 
 public class User
 {
-    private Integer FriendCode;
+    private Integer ID;
     private String Name;
     private int CompanyID;
     private String Email;
     private String Password;
 
-    public User(Integer friendCode, String name)
+    public User(Integer id, String name)
     {
-        FriendCode = friendCode;
+        ID = id;
         Name = name;
     }
 
-    public User(Integer friendCode, String name, int companyID)
+    public User(Integer id, String name, int companyID)
     {
-        FriendCode = friendCode;
+        ID = id;
         Name = name;
         CompanyID = companyID;
     }
 
-    public User(Integer friendCode, String name, int companyID, String email, String password)
+    public User(String name, String email, String password)
     {
-        FriendCode = friendCode;
+        Name = name;
+        Email = email;
+        Password = password;
+    }
+
+    public User(Integer id, String name, int companyID, String email, String password)
+    {
+        ID = id;
         Name = name;
         CompanyID = companyID;
         Email = email;
         Password = password;
     }
 
-    public int FriendCode(){ return FriendCode; }
+    public int ID(){ return ID; }
 
     public String Name() { return Name; }
     public void setName(String name) { this.Name = name; }
