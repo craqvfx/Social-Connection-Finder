@@ -215,9 +215,8 @@ public class Main
         return currentUser;
     }
 
-    static String[] findConnectionsScreen(User currentUser)
+    static void findConnectionsScreen(User currentUser)
     {
-        // TODO
         Scanner in = new Scanner(System.in);
 
         int choice;
@@ -231,15 +230,76 @@ public class Main
         } while(choice < 1 || choice > 3);
 
         DatabaseConnect conn = new DatabaseConnect();
+        int targetID;
         switch (choice)
         {
             case 1:
                 System.out.println("--- Search Users by Industry ---");
-                // TODO
+
+                int industryID;
+                do
+                {
+                    System.out.println("Please choose one of the following industries by entering it's corresponding number:");
+
+                    String[] industryList = conn.getIndustryList();
+                    for(String industry : industryList) 
+                    {
+                        System.out.println(industry);
+                    }
+                    industryID = in.nextInt();
+                    in.nextLine(); // consume leftover newline
+                } while(!conn.IDExists("Industry", industryID));
+
+                do
+                {
+                    System.out.println("Please choose one of the following Users by entering the User's corresponding Friend Code:");
+                    System.out.println("Friend Code | Name");
+
+                    String[] userList = conn.getUsersByCompany(industryID);
+                    for(String user : userList) // output all users in the selected industry
+                    {
+                        System.out.println(user);
+                    }
+                    targetID = in.nextInt(); // get user input for connection to find
+
+                    in.nextLine(); // consume leftover newline
+                } while(!conn.IDExists("User", targetID));
+
+                // TODO: Find and display connection path between currentUser and targetID
                 break;
             case 2:
                 System.out.println("--- Search Users by Company ---");
-                // TODO
+
+                int companyID;
+                do
+                {
+                    System.out.println("Please choose one of the following companies by entering it's corresponding number:");
+
+                    String[] companyList = conn.getCompanyList();
+                    for(String company : companyList) 
+                    {
+                        System.out.println(company);
+                    }
+                    companyID = in.nextInt();
+                    in.nextLine(); // consume leftover newline
+                } while(!conn.IDExists("Company", companyID));
+
+                do
+                {
+                    System.out.println("Please choose one of the following Users by entering the User's corresponding Friend Code:");
+                    System.out.println("Friend Code | Name");
+
+                    String[] userList = conn.getUsersByCompany(companyID);
+                    for(String user : userList) // output all users in the selected company
+                    {
+                        System.out.println(user);
+                    }
+                    targetID = in.nextInt(); // get user input for connection to find
+
+                    in.nextLine(); // consume leftover newline
+                } while(!conn.IDExists("User", targetID));
+
+                // TODO: Find and display connection path between currentUser and targetID
                 break;
             case 3:
                 System.out.println("Exiting...");
