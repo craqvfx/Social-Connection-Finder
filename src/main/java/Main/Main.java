@@ -235,10 +235,10 @@ public class Main
         } while(choice < 1 || choice > 3);
 
         DatabaseConnect conn = new DatabaseConnect();
+        int targetID;
         switch (choice) // TODO: implement the following pseudocode
         {
             case 1:
-                int targetID;
                 int weight;
                 System.out.println("--- Add new Connection ---");
 
@@ -251,6 +251,9 @@ public class Main
                     targetID = in.nextInt();
                     in.nextLine(); // consume leftover newline
                 } while(!conn.IDExists("User", targetID) || targetID == currentUser.ID()); // Only exit if ID exists and is not self
+
+                // TODO: add check to see if connection already exists
+                // TODO: display target user's name for confirmation
 
                 do
                 {
@@ -265,9 +268,25 @@ public class Main
                 break;
             case 2:
                 System.out.println("--- Delete Connection ---");
-                // output current connections
-                // get user input for connection to delete
-                // call DatabaseConnect.deleteConnection(from, to);
+                
+                do
+                {
+                    System.out.println("Please choose one of the following connections by entering the User's corresponding Friend Code:");
+                    System.out.println("Friend Code | Name");
+
+                    String[] connectionList = conn.getConnectionList();
+                    for(String connection : connectionList) // output current connections
+
+                    {
+                        System.out.println(connection);
+                    }
+                    targetID = in.nextInt(); // get user input for connection to delete
+
+                    in.nextLine(); // consume leftover newline
+                } while(!conn.IDExists("Connections", targetID));
+
+                conn.deleteConnection(currentUser.ID(), targetID);
+                System.out.println("Connection deleted successfully!");
                 break;
             case 3:
                 System.out.println("Exiting...");
