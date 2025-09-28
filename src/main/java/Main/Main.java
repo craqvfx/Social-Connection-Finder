@@ -218,6 +218,38 @@ public class Main
     static String[] findConnectionsScreen(User currentUser)
     {
         // TODO
+        Scanner in = new Scanner(System.in);
+
+        int choice;
+        do
+        {
+            System.out.println("Please choose one of the following options by entering it's corresponding number:");
+            System.out.println("1 | Search Users by Industry");
+            System.out.println("2 | Search Users by Company");
+            System.out.println("3 | Exit");
+            choice = in.nextInt();
+        } while(choice < 1 || choice > 3);
+
+        DatabaseConnect conn = new DatabaseConnect();
+        switch (choice)
+        {
+            case 1:
+                System.out.println("--- Search Users by Industry ---");
+                // TODO
+                break;
+            case 2:
+                System.out.println("--- Search Users by Company ---");
+                // TODO
+                break;
+            case 3:
+                System.out.println("Exiting...");
+                System.exit(0);
+                break;
+            default:
+                System.out.println("Error: Invalid choice. Exiting...");
+                System.exit(1);
+        }
+        conn.close();
     }
 
     static void manageConnectionsScreen(User currentUser)
