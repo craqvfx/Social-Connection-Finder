@@ -236,13 +236,13 @@ public class Main
 
         DatabaseConnect conn = new DatabaseConnect();
         int targetID;
-        switch (choice) // TODO: implement the following pseudocode
+        switch (choice)
         {
             case 1:
                 int weight;
                 System.out.println("--- Add new Connection ---");
 
-                boolean failed = true;
+                boolean success = true;
                 do {
                     System.out.println("Please input the Friend Code of the person you want to connect to:");
 
@@ -264,11 +264,21 @@ public class Main
                     }
                     else 
                     {
-                        failed = false;
+                        //If we reach here, the input is valid. Now we verify the user is happy with it
+                        System.out.println("You have selected the user:\n" + targetID + " | " + conn.getUser(targetID).Name());
+                        System.out.println("Was this correct? (y/n)");
+                        String confirmation = in.nextLine().trim().toLowerCase();
+                        if (confirmation.equals("y")) 
+                        {
+                            success = true;
+                        }
+                        else
+                        {
+                            System.out.println("Let's try again.");
+                            success = false;
+                        }
                     }
-                } while(failed);
-
-                // TODO: display target user's name for confirmation
+                } while(!success);
 
                 do {
                     System.out.println("Please rank the strength of your connection out of 5, 1 being strongest and 5 being weakest:");
