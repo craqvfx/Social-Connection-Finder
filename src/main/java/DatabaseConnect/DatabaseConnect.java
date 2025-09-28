@@ -574,10 +574,12 @@ public class DatabaseConnect implements IDatabaseConnect
             stmt = conn.createStatement();
 
             // Check if table has an ID column
-            rs = stmt.executeQuery("PRAGMA table_info('" + tableName + "');");
-            while (rs.next()) {
+            rs = stmt.executeQuery("PRAGMA table_info('" + tableName + "');"); // Gets metadata about the table's columns
+            while (rs.next()) 
+            {
                 String colName = rs.getString("name");
-                if (colName.equalsIgnoreCase("ID")) {
+                if (colName.equalsIgnoreCase("ID")) // equalsIgnoreCase checks for equality while avoiding case sensitivity issues
+                {
                     idColumn = "ID";
                     break;
                 }
@@ -586,9 +588,9 @@ public class DatabaseConnect implements IDatabaseConnect
 
             String query;
             if (idColumn != null) {
-                query = "SELECT * FROM " + tableName + " ORDER BY ID DESC LIMIT 1;";
+                query = "SELECT * FROM " + tableName + " WHERE ID = " + ID + ";";
             } else {
-                query = "SELECT * FROM " + tableName + " ORDER BY rowid DESC LIMIT 1;";
+                query = "SELECT * FROM " + tableName + " WHERE rowid = " + ID + ";";
             }
 
             rs = stmt.executeQuery(query);
