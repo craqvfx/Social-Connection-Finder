@@ -265,7 +265,6 @@ public class Main
                     in.nextLine(); // consume leftover newline
                 } while(!conn.IDExists("User", targetID));
 
-                // TODO: Find and display connection path between currentUser and targetID
                 break;
             case 2:
                 System.out.println("--- Search Users by Company ---");
@@ -299,7 +298,6 @@ public class Main
                     in.nextLine(); // consume leftover newline
                 } while(!conn.IDExists("User", targetID));
 
-                // TODO: Find and display connection path between currentUser and targetID
                 break;
             case 3:
                 System.out.println("Exiting...");
@@ -309,6 +307,12 @@ public class Main
                 System.out.println("Error: Invalid choice. Exiting...");
                 System.exit(1);
         }
+        
+        Graph graph = new Graph();
+        conn.loadGraph(graph);
+        Dijkstra dijkstra = new Dijkstra(graph);
+        System.out.println("Finding shortest path from " + currentUser.Name() + " to " + conn.getUser(targetID).Name() + "...");
+        dijkstra.printPath(currentUser.ID(), targetID);
         conn.close();
     }
 
