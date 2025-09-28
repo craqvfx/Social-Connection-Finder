@@ -514,6 +514,38 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
+    public String[] getConnectionList()
+    {
+        Statement stmt = null;
+        ResultSet rs = null;
+        ArrayList<String> connectionList = new ArrayList<>();
+        int targetID;
+
+        try
+        {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT * FROM Connections;");
+            boolean found = false;
+            while (rs.next()) {
+                found = true;
+                targetID = rs.getInt("TargetID");
+                connectionList.add(targetID + " | " + getUser(targetID).Name());
+            }
+            if (!found) {
+                connectionList.add("No connections found");
+            }
+            rs.close();
+            stmt.close();
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
+
+        return connectionList.toArray(new String[0]);
+    }
+
+    @Override
     public int getMostRecentID(String tableName)
     {
         /*
@@ -562,6 +594,7 @@ public class DatabaseConnect implements IDatabaseConnect
         return mostRecentID;
     }
 
+    @Override
     public boolean IDExists(String tableName, int ID)
     {
         Statement stmt = null;
@@ -583,12 +616,19 @@ public class DatabaseConnect implements IDatabaseConnect
                     idColumn = "ID";
                     break;
                 }
+                else if(colName.equalsIgnoreCase("TargetID")) // If there's no ID column, check for targetID (for connections table)
+                {
+                    idColumn = "TargetID";
+                    break;
+                }
             }
             rs.close();
 
             String query;
-            if (idColumn != null) {
+            if (idColumn.equals("ID")) {
                 query = "SELECT * FROM " + tableName + " WHERE ID = " + ID + ";";
+            } else if (idColumn.equals("TargetID")) {
+                query = "SELECT * FROM " + tableName + " WHERE TargetID = " + ID + ";";
             } else {
                 query = "SELECT * FROM " + tableName + " WHERE rowid = " + ID + ";";
             }
