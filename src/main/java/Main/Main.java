@@ -234,12 +234,34 @@ public class Main
             choice = in.nextInt();
         } while(choice < 1 || choice > 3);
 
+        DatabaseConnect conn = new DatabaseConnect();
         switch (choice) // TODO: implement the following pseudocode
         {
             case 1:
+                int targetID;
+                int weight;
                 System.out.println("--- Add new Connection ---");
-                // get user input for new connection
-                // call DatabaseConnect.addConnection(from, to, weight);
+
+                int i = 0;
+                do {
+                    System.out.println("Please input the Friend Code of the person you want to connect to:");
+                    if(i > 0) System.out.println("Error: Invalid Friend Code, please try again.");
+                    i++;
+
+                    targetID = in.nextInt();
+                    in.nextLine(); // consume leftover newline
+                } while(!conn.IDExists("User", targetID) || targetID == currentUser.ID()); // Only exit if ID exists and is not self
+
+                do
+                {
+                    System.out.println("Please rank the strength of your connection out of 5, 1 being strongest and 5 being weakest:");
+
+                    weight = in.nextInt();
+                    in.nextLine(); // consume leftover newline
+                } while(weight < 1 || weight > 5);
+
+                conn.addConnection(currentUser.ID(), targetID, weight);
+                System.out.println("Connection added successfully!");
                 break;
             case 2:
                 System.out.println("--- Delete Connection ---");
@@ -255,6 +277,7 @@ public class Main
                 System.out.println("Error: Invalid choice. Exiting...");
                 System.exit(1);
         }
+        conn.close();
     }
 
     static void manageAccountScreen(User currentUser)
