@@ -1,7 +1,5 @@
 package DatabaseConnect;
 
-import java.util.ArrayList;
-
 import Graph.Graph;
 
 public interface IDatabaseConnect 
@@ -25,8 +23,8 @@ public interface IDatabaseConnect
 
     public boolean addCompany(Company company);
 
-    public ArrayList<User> getUsersByIndustry(int IndustryID);
-    public ArrayList<User> getUsersByCompany(int CompanyID);
+    public String[] getUsersByIndustry(int IndustryID);
+    public String[] getUsersByCompany(int CompanyID);
 
     public String[] getCompanyList();
     public String[] getIndustryList();

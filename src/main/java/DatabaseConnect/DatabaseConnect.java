@@ -384,12 +384,11 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public ArrayList<User> getUsersByIndustry(int IndustryID)
+    public String[] getUsersByIndustry(int IndustryID)
     {
         Statement stmt = null;
         ResultSet rs = null;
-        User user = null;
-        ArrayList <User> userList = new ArrayList<User>();
+        ArrayList <String> userList = new ArrayList<String>();
 
         try
         {
@@ -401,11 +400,7 @@ public class DatabaseConnect implements IDatabaseConnect
 
             while(rs.next())
             {
-                int ID = rs.getInt("ID");
-                String Name = rs.getString("Name");
-                int CompanyID = rs.getInt("CompanyID");
-                user = new User(ID, Name, CompanyID);
-                userList.add(user);
+                userList.add(rs.getInt("ID") + " | " + rs.getString("Name"));
             }
             
             rs.close();
@@ -416,16 +411,15 @@ public class DatabaseConnect implements IDatabaseConnect
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return userList;
+        return userList.toArray(new String[0]);
     }
 
     @Override
-    public ArrayList<User> getUsersByCompany(int CompanyID)
+    public String[] getUsersByCompany(int CompanyID)
     {
         Statement stmt = null;
         ResultSet rs = null;
-        User user = null;
-        ArrayList <User> userList = new ArrayList<User>();
+        ArrayList <String> userList = new ArrayList<String>();
 
         try
         {
@@ -436,10 +430,7 @@ public class DatabaseConnect implements IDatabaseConnect
 
             while(rs.next())
             {
-                int ID = rs.getInt("ID");
-                String Name = rs.getString("Name");
-                user = new User(ID, Name, CompanyID);
-                userList.add(user);
+                userList.add(rs.getInt("ID") + " | " + rs.getString("Name"));
             }
             
             rs.close();
@@ -450,7 +441,7 @@ public class DatabaseConnect implements IDatabaseConnect
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
         }
 
-        return userList;
+        return userList.toArray(new String[0]);
     }
 
     @Override
