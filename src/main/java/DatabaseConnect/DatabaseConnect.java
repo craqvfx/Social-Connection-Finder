@@ -398,9 +398,14 @@ public class DatabaseConnect implements IDatabaseConnect
             + " WHERE User.CompanyID = Company.ID"
             + " AND Company.IndustryID = '" + IndustryID + "';");
 
+            boolean found = false;
             while(rs.next())
             {
                 userList.add(rs.getInt("ID") + " | " + rs.getString("Name"));
+            }
+            if (!found) {
+                found = true;
+                userList.add("No users found");
             }
             
             rs.close();
@@ -428,11 +433,15 @@ public class DatabaseConnect implements IDatabaseConnect
             + " FROM User, Company"
             + " WHERE User.CompanyID = '" + CompanyID + "';");
 
+            boolean found = false;
             while(rs.next())
             {
                 userList.add(rs.getInt("ID") + " | " + rs.getString("Name"));
             }
-            
+            if (!found) {
+                found = true;
+                userList.add("No users found");
+            }
             rs.close();
             stmt.close();
         }
