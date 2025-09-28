@@ -34,4 +34,5 @@ public interface IDatabaseConnect
 
     public int getMostRecentID(String tableName);
     public boolean IDExists(String tableName, int ID);
+    public boolean connectionExists(int from, int to);
 }

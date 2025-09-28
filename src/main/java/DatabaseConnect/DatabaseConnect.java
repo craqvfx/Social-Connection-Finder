@@ -1,3 +1,4 @@
+
 package DatabaseConnect;
 
 import java.sql.Connection;
@@ -646,6 +647,27 @@ public class DatabaseConnect implements IDatabaseConnect
             System.err.println(e.getClass().getName()   + ": " + e.getMessage());
         }
 
+        return exists;
+    }
+
+    @Override
+    public boolean connectionExists(int sourceID, int targetID)
+    {
+        Statement stmt = null;
+        ResultSet rs = null;
+        boolean exists = false;
+        try {
+            stmt = conn.createStatement();
+            String query = "SELECT * FROM Connections WHERE SourceID = " + sourceID + " AND TargetID = " + targetID + ";";
+            rs = stmt.executeQuery(query);
+            if (rs.next()) {
+                exists = true;
+            }
+            rs.close();
+            stmt.close();
+        } catch (SQLException e) {
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+        }
         return exists;
     }
 }

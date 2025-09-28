@@ -242,28 +242,42 @@ public class Main
                 int weight;
                 System.out.println("--- Add new Connection ---");
 
-                int i = 0;
+                boolean failed = true;
                 do {
                     System.out.println("Please input the Friend Code of the person you want to connect to:");
-                    if(i > 0) System.out.println("Error: Invalid Friend Code, please try again.");
-                    i++;
 
                     targetID = in.nextInt();
                     in.nextLine(); // consume leftover newline
-                } while(!conn.IDExists("User", targetID) || targetID == currentUser.ID()); // Only exit if ID exists and is not self
 
-                // TODO: add check to see if connection already exists
+                    if (!conn.IDExists("User", targetID)) 
+                    {
+                        System.out.println("Error: User indicated by Friend Code doesn't exist, please try again.");
+                    }
+                    else if(targetID == currentUser.ID())
+                    {
+                        System.out.println("Error: You cannot add yourself as a connection. Please enter a different Friend Code.");
+                    }
+                    else if(conn.connectionExists(currentUser.ID(), targetID))
+                    {
+                        System.out.println("Error: You already have a connection with this user. Please enter a different Friend Code.");
+                        targetID = -1; // force loop to continue
+                    }
+                    else 
+                    {
+                        failed = false;
+                    }
+                } while(failed);
+
                 // TODO: display target user's name for confirmation
 
-                do
-                {
+                do {
                     System.out.println("Please rank the strength of your connection out of 5, 1 being strongest and 5 being weakest:");
-
                     weight = in.nextInt();
                     in.nextLine(); // consume leftover newline
                 } while(weight < 1 || weight > 5);
 
-                conn.addConnection(currentUser.ID(), targetID, weight);
+                conn.addConnection(currentUser.ID(), targetID, weight); // TODO: Refactor to wrap these operations in a single transaction
+                conn.addConnection(targetID, currentUser.ID(), weight);
                 System.out.println("Connection added successfully!");
                 break;
             case 2:
@@ -276,7 +290,6 @@ public class Main
 
                     String[] connectionList = conn.getConnectionList();
                     for(String connection : connectionList) // output current connections
-
                     {
                         System.out.println(connection);
                     }
@@ -285,7 +298,8 @@ public class Main
                     in.nextLine(); // consume leftover newline
                 } while(!conn.IDExists("Connections", targetID));
 
-                conn.deleteConnection(currentUser.ID(), targetID);
+                conn.deleteConnection(currentUser.ID(), targetID); // TODO: refactor to wrap these operations in a single transaction
+                conn.deleteConnection(targetID, currentUser.ID());
                 System.out.println("Connection deleted successfully!");
                 break;
             case 3:
