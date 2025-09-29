@@ -399,6 +399,7 @@ public class DatabaseConnect implements IDatabaseConnect
             boolean found = false;
             while(rs.next())
             {
+                found = true;
                 userList.add(rs.getInt("ID") + " | " + rs.getString("Name"));
             }
             if (!found) {
@@ -434,10 +435,10 @@ public class DatabaseConnect implements IDatabaseConnect
             boolean found = false;
             while(rs.next())
             {
+                found = true;
                 userList.add(rs.getInt("ID") + " | " + rs.getString("Name"));
             }
             if (!found) {
-                found = true;
                 userList.add("No users found");
             }
             rs.close();
