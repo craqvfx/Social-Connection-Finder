@@ -245,7 +245,7 @@ public class Main
                     System.out.println("Please choose one of the following Users by entering the User's corresponding Friend Code:");
                     System.out.println("Friend Code | Name");
 
-                    String[] userList = conn.getUsersByCompany(industryID);
+                    String[] userList = conn.getUsersByIndustry(industryID);
                     for(String user : userList) // output all users in the selected industry
                     {
                         System.out.println(user);

@@ -393,8 +393,8 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT User.ID, User.Name, User.CompanyID"
-            + " FROM User, Company, Industry"
+            rs = stmt.executeQuery("SELECT User.ID, User.Name"
+            + " FROM User, Company"
             + " WHERE User.CompanyID = Company.ID"
             + " AND Company.IndustryID = '" + IndustryID + "';");
 
@@ -429,8 +429,8 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT User.ID, User.Name, User.CompanyID"
-            + " FROM User, Company"
+            rs = stmt.executeQuery("SELECT User.ID, User.Name"
+            + " FROM User"
             + " WHERE User.CompanyID = '" + CompanyID + "';");
 
             boolean found = false;

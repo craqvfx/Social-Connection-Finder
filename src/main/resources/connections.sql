@@ -65,11 +65,11 @@ VALUES (" + CompanyName + ", (SELECT ID FROM Industry WHERE Industry = " + Indus
 
 --Get all the IDs of people who work in a specified industry:
 SELECT User.ID
-FROM User, Company, Industry
+FROM User, Company
 WHERE User.CompanyID = Company.ID
   AND Company.IndustryID = " + IndustryID + ";
 
 --Get all the IDs of people who work at a specified company: 
 SELECT User.ID
-FROM User, Company
+FROM User
 WHERE User.CompanyID = " + CompanyID + ";
