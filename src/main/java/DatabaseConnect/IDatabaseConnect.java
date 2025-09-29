@@ -28,7 +28,7 @@ public interface IDatabaseConnect
 
     public String[] getCompanyList();
     public String[] getIndustryList();
-    public String[] getConnectionList();
+    public String[] getConnectionList(User user);
 
     public int getMostRecentID(String tableName);
     public boolean IDExists(String tableName, int ID);

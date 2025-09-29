@@ -238,7 +238,8 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            String sql = "DELETE FROM Connections WHERE SourceID = '" + sourceID + "' AND TargetID = '" + targetID + "';";
+            String sql = "DELETE FROM Connections WHERE (SourceID = '" + sourceID + "' AND TargetID = '" + targetID + "')"
+                       + " OR (SourceID = '" + targetID + "' AND TargetID = '" + sourceID + "');";
             stmt.executeUpdate(sql);
 
             stmt.close();
@@ -515,7 +516,7 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public String[] getConnectionList()
+    public String[] getConnectionList(User user)
     {
         Statement stmt = null;
         ResultSet rs = null;
@@ -525,7 +526,9 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            rs = stmt.executeQuery("SELECT * FROM Connections;");
+            rs = stmt.executeQuery("SELECT * FROM Connections"
+                                + " WHERE SourceID = '" + user.ID() + "'"
+                                + " OR TargetID = '" + user.ID() + "';");
             boolean found = false;
             while (rs.next()) {
                 found = true;

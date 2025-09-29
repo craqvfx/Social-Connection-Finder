@@ -373,8 +373,7 @@ public class Main
                     in.nextLine(); // consume leftover newline
                 } while(weight < 1 || weight > 5);
 
-                conn.addConnection(currentUser.ID(), targetID, weight); // TODO: Refactor to wrap these operations in a single transaction
-                conn.addConnection(targetID, currentUser.ID(), weight);
+                conn.addConnection(currentUser.ID(), targetID, weight);
                 System.out.println("Connection added successfully!");
                 break;
             case 2:
@@ -385,7 +384,7 @@ public class Main
                     System.out.println("Please choose one of the following connections by entering the User's corresponding Friend Code:");
                     System.out.println("Friend Code | Name");
 
-                    String[] connectionList = conn.getConnectionList();
+                    String[] connectionList = conn.getConnectionList(currentUser);
                     for(String connection : connectionList) // output current connections
                     {
                         System.out.println(connection);
@@ -395,8 +394,7 @@ public class Main
                     in.nextLine(); // consume leftover newline
                 } while(!conn.IDExists("Connections", targetID));
 
-                conn.deleteConnection(currentUser.ID(), targetID); // TODO: refactor to wrap these operations in a single transaction
-                conn.deleteConnection(targetID, currentUser.ID());
+                conn.deleteConnection(currentUser.ID(), targetID);
                 System.out.println("Connection deleted successfully!");
                 break;
             case 3:

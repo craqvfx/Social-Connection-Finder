@@ -40,9 +40,9 @@ INSERT INTO Connections (SourceID, TargetID)
 VALUES (" + SourceID + ", " + TargetID + ");
 
 --Delete Connection, given source and target IDs:
-DELETE FROM Connections
-WHERE SourceID = " + SourceID + "
-  AND TargetID = " + TargetID + ";
+DELETE FROM Connections 
+WHERE (SourceID = " + sourceID + " AND TargetID = " + targetID + ")
+OR (SourceID = " + targetID + " AND TargetID = " + sourceID + ");
 
 --Modify Password, given ID:
 UPDATE LoginInfo
