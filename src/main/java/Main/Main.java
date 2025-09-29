@@ -317,7 +317,8 @@ public class Main
             System.out.println("Please choose one of the following options by entering it's corresponding number:");
             System.out.println("1 | Add new Connection");
             System.out.println("2 | Delete Connection");
-            System.out.println("3 | Exit");
+            System.out.println("3 | View Connections");
+            System.out.println("4 | Exit");
             choice = in.nextInt();
         } while(choice < 1 || choice > 3);
 
@@ -398,6 +399,19 @@ public class Main
                 System.out.println("Connection deleted successfully!");
                 break;
             case 3:
+                System.out.println("--- View Connections ---");
+                
+                System.out.println("Here are your current connections:");
+                System.out.println("Friend Code | Name");
+
+                String[] connectionList = conn.getConnectionList(currentUser);
+                for(String connection : connectionList) // output current connections
+                {
+                    System.out.println(connection);
+                }
+                System.out.println();
+                break;
+            case 4:
                 System.out.println("Exiting...");
                 System.exit(0);
                 break;
