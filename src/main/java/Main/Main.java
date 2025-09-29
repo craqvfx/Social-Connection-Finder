@@ -19,16 +19,6 @@ public class Main
     {
         User user = WelcomeScreen();
         HomeScreen(user);
-
-        DatabaseConnect conn = new DatabaseConnect();
-        Graph graph = new Graph();
-        conn.loadGraph(graph);
-        conn.close();
-        System.out.println(graph.toString());
-        Dijkstra dijkstra = new Dijkstra(graph);
-
-        dijkstra.printPath("John Smith", "Becky Jane");
-        System.out.println("\nDistance: " + dijkstra.getDistance("John Smith", "Becky Jane") + "0km");
     }
 
     private static User WelcomeScreen()
@@ -230,7 +220,7 @@ public class Main
         } while(choice < 1 || choice > 3);
 
         DatabaseConnect conn = new DatabaseConnect();
-        int targetID;
+        int targetID = -1;
         switch (choice)
         {
             case 1:
@@ -312,7 +302,8 @@ public class Main
         conn.loadGraph(graph);
         Dijkstra dijkstra = new Dijkstra(graph);
         System.out.println("Finding shortest path from " + currentUser.Name() + " to " + conn.getUser(targetID).Name() + "...");
-        dijkstra.printPath(currentUser.ID(), targetID);
+        dijkstra.printPath(currentUser.Name(), conn.getUser(targetID).Name());
+        System.out.println();
         conn.close();
     }
 
