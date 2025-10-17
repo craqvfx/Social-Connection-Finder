@@ -221,6 +221,8 @@ public class Main
 
         DatabaseConnect conn = new DatabaseConnect();
         int targetID = -1;
+        boolean success = true;
+
         switch (choice)
         {
             case 1:
@@ -229,6 +231,7 @@ public class Main
                 int industryID;
                 do
                 {
+                    success = true;
                     System.out.println("Please choose one of the following industries by entering it's corresponding number:");
 
                     String[] industryList = conn.getIndustryList();
@@ -238,30 +241,74 @@ public class Main
                     }
                     industryID = in.nextInt();
                     in.nextLine(); // consume leftover newline
-                } while(!conn.IDExists("Industry", industryID));
+                    if(!conn.IDExists("Industry", industryID))
+                    {
+                        System.out.println("The Industry ID you entered does not exist, please try again.");
+                        success = false;
+                        continue;
+                    }
+
+                    String[] userList = conn.getUsersByIndustry(industryID);
+                    if(userList[0].equals("No users found"))
+                    {
+                        System.out.println("No users found in the selected industry, please choose a different industry.");
+                        success = false;
+                    }
+
+                } while(!success);
 
                 do
                 {
+                    success = true;
                     System.out.println("Please choose one of the following Users by entering the User's corresponding Friend Code:");
                     System.out.println("Friend Code | Name");
 
-                    String[] userList = conn.getUsersByIndustry(industryID); // TODO: Handle case where no users are found in the selected industry
+                    String[] userList = conn.getUsersByIndustry(industryID);
                     for(String user : userList) // output all users in the selected industry
                     {
                         System.out.println(user);
                     }
                     targetID = in.nextInt(); // get user input for connection to find
-
                     in.nextLine(); // consume leftover newline
-                } while(!conn.IDExists("User", targetID));
+
+                    // Check if targetID is in userList
+                    boolean foundInList = false;
+                    for (String user : userList) 
+                    {
+                        String[] parts = user.split("\\|");
+                        if (parts.length > 0) {
+                            int friendCode = Integer.parseInt(parts[0].trim());
+                            if (friendCode == targetID) 
+                            {
+                                foundInList = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!foundInList)
+                    {
+                        System.out.println("The Friend Code you entered was not in the user list, please try again.");
+                        success = false;
+                        continue;
+                    }
+
+                    if(!conn.IDExists("User", targetID))
+                    {
+                        System.out.println("The Friend Code you entered does not exist, please try again.");
+                        success = false;
+                    }
+                } while(!success);
 
                 break;
             case 2:
                 System.out.println("--- Search Users by Company ---");
 
                 int companyID;
+                success = true;
                 do
                 {
+                    success = true;
                     System.out.println("Please choose one of the following companies by entering it's corresponding number:");
 
                     String[] companyList = conn.getCompanyList();
@@ -271,22 +318,68 @@ public class Main
                     }
                     companyID = in.nextInt();
                     in.nextLine(); // consume leftover newline
-                } while(!conn.IDExists("Company", companyID));
+
+                    if(!conn.IDExists("Company", companyID))
+                    {
+                        System.out.println("The Company ID you entered does not exist, please try again.");
+                        success = false;
+                        continue;
+                    }
+
+                    String[] userList = conn.getUsersByCompany(companyID);
+                    if(userList[0].equals("No users found"))
+                    {
+                        System.out.println("No users found in the selected company, please choose a different company.");
+                        success = false;
+                    }
+
+                } while(!success);
 
                 do
                 {
+                    success = true;
                     System.out.println("Please choose one of the following Users by entering the User's corresponding Friend Code:");
                     System.out.println("Friend Code | Name");
 
-                    String[] userList = conn.getUsersByCompany(companyID); // TODO: Handle case where no users are found in the selected company
+                    String[] userList = conn.getUsersByCompany(companyID);
+
                     for(String user : userList) // output all users in the selected company
                     {
                         System.out.println(user);
                     }
-                    targetID = in.nextInt(); // get user input for connection to find
 
+                    targetID = in.nextInt(); // get user input for connection to find
                     in.nextLine(); // consume leftover newline
-                } while(!conn.IDExists("User", targetID));
+
+                    // Check if targetID is in userList
+                    boolean foundInList = false;
+                    for (String user : userList) 
+                    {
+                        String[] parts = user.split("\\|");
+                        if (parts.length > 0) {
+                            int friendCode = Integer.parseInt(parts[0].trim());
+                            if (friendCode == targetID) 
+                            {
+                                foundInList = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!foundInList)
+                    {
+                        System.out.println("The Friend Code you entered was not in the user list, please try again.");
+                        success = false;
+                        continue;
+                    }
+
+                    if(!conn.IDExists("User", targetID))
+                    {
+                        System.out.println("The Friend Code you entered does not exist, please try again.");
+                        success = false;
+                    }
+
+                } while(!success);
 
                 break;
             case 3:
