@@ -166,7 +166,7 @@ public class Main
         {
             System.out.println("Please choose one of the following options by entering it's corresponding number:");
             System.out.println("1 | Find Connections");
-            System.out.println("2 | Manage Connecions");
+            System.out.println("2 | Manage Connections");
             System.out.println("3 | Manage Account");
             System.out.println("4 | Logout");
             System.out.println("5 | Exit");
@@ -190,7 +190,7 @@ public class Main
                 break;
             case 4:
                 System.out.println("Logging out user...");
-                System.exit(0);
+                currentUser = WelcomeScreen();
                 break;
             case 5:
                 System.out.println("Exiting...");
@@ -215,7 +215,7 @@ public class Main
             System.out.println("Please choose one of the following options by entering it's corresponding number:");
             System.out.println("1 | Search Users by Industry");
             System.out.println("2 | Search Users by Company");
-            System.out.println("3 | Exit");
+            System.out.println("3 | Return to Home Screen");
             choice = in.nextInt();
         } while(choice < 1 || choice > 3);
 
@@ -290,8 +290,7 @@ public class Main
 
                 break;
             case 3:
-                System.out.println("Exiting...");
-                System.exit(0);
+                System.out.println("Returning to Home Screen...");
                 break;
             default:
                 System.out.println("Error: Invalid choice. Exiting...");
@@ -318,7 +317,7 @@ public class Main
             System.out.println("1 | Add new Connection");
             System.out.println("2 | Delete Connection");
             System.out.println("3 | View Connections");
-            System.out.println("4 | Exit");
+            System.out.println("4 | Return to Home Screen");
             choice = in.nextInt();
         } while(choice < 1 || choice > 3);
 
@@ -412,8 +411,7 @@ public class Main
                 System.out.println();
                 break;
             case 4:
-                System.out.println("Exiting...");
-                System.exit(0);
+                System.out.println("Returning to Home Screen...");
                 break;
             default:
                 System.out.println("Error: Invalid choice. Exiting...");
@@ -434,7 +432,7 @@ public class Main
             System.out.println("2 | Update Password");
             System.out.println("3 | Update Name");
             System.out.println("4 | Update Company");
-            System.out.println("5 | Exit");
+            System.out.println("5 | Return to Home Screen");
             choice = in.nextInt();
             in.nextLine(); // consume leftover newline
         } while(choice < 1 || choice > 5);
@@ -548,8 +546,7 @@ public class Main
 
                 break;
             case 5:
-                System.out.println("Exiting...");
-                System.exit(0);
+                System.out.println("Returning to Home Screen...");
                 break;
             default:
                 System.out.println("Error: Invalid choice. Exiting...");
