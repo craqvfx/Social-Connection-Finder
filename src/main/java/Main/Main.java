@@ -128,6 +128,17 @@ public class Main
             {
                 System.out.println("Please enter your password:");
                 password = in.nextLine();
+                if(password.length() < 8)
+                {
+                    System.out.println("Password must be at least 8 characters long, please try again.");
+                    password = "";
+                }
+                else if(!password.matches(".*[A-Za-z].*") || !password.matches(".*\\d.*"))
+                {
+                    System.out.println("Password must contain at least 1 letter and 1 number, please try again.");
+                    password = "";
+                }
+                
             } while(password.isEmpty());
 
             register(name, email, password);
