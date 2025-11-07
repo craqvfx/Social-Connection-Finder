@@ -135,7 +135,7 @@ public class DatabaseConnect implements IDatabaseConnect
     }
 
     @Override
-    public boolean addUser(User user) // TODO: update to work regardless of what fields there are
+    public boolean addUser(User user)
     {
         boolean success = false;
         Statement stmt = null;
