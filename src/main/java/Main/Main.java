@@ -15,6 +15,9 @@ import java.util.Scanner;
 
 public class Main
 {
+
+    private static final Scanner in = new Scanner(System.in); // Single Scanner instance for the entire class, not closed as closing it closes whole input stream for program, and will be cleaned up on program exit anyway
+
     public static void main(String[] args)
     {
         User user = WelcomeScreen();
@@ -23,7 +26,6 @@ public class Main
 
     private static User WelcomeScreen()
     {
-        Scanner in = new Scanner(System.in);
         User user = null;
         System.out.println("--- Welcome to the Social Network Connection Finder! ---");
 
@@ -62,7 +64,6 @@ public class Main
 
     private static User loginScreen()
     {
-        Scanner in = new Scanner(System.in);
         String email;
         String password;
         User currentUser = null;
@@ -105,7 +106,6 @@ public class Main
 
     private static void registerScreen()
     {
-        Scanner in = new Scanner(System.in);
         String name;
         String email;
         String password;
@@ -169,7 +169,6 @@ public class Main
     
     private static User HomeScreen(User currentUser)
     {
-        Scanner in = new Scanner(System.in);
         System.out.println("--- Home ---");
 
         int choice;
@@ -218,8 +217,6 @@ public class Main
 
     static void findConnectionsScreen(User currentUser)
     {
-        Scanner in = new Scanner(System.in);
-
         int choice;
         do
         {
@@ -412,8 +409,6 @@ public class Main
 
     static void manageConnectionsScreen(User currentUser)
     {
-        Scanner in = new Scanner(System.in);
-
         int choice;
         do
         {
@@ -526,8 +521,6 @@ public class Main
 
     static void manageAccountScreen(User currentUser)
     {
-        Scanner in = new Scanner(System.in);
-
         int choice;
         do
         {
