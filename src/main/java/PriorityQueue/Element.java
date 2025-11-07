@@ -1,6 +1,6 @@
 package PriorityQueue;
 
-//an individual element of the priortiyQueue, stores value (name), priority, and previous and next pointers (for linked list)
+// An individual element of the priortiyQueue, stores value (name), priority, and previous and next pointers (for linked list)
 public class Element
 {
     private String value;

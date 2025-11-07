@@ -3,36 +3,18 @@ package PriorityQueue;
 import java.util.ArrayList;
 
 public class PriorityQueue
-{   //The front of the priority queue, e.g the 1st element
-    private Element front;
+{   
+    private Element front; // The front of the priority queue, e.g the 1st element
     private int length = 0;
 
-    public static void main(String[] args)
-    {
-        PriorityQueue pq = new PriorityQueue();
-        pq.isEmpty();
-        //pq.pop();
-        pq.add("1", 1);pq.printArray();
-        pq.add("4", 4);pq.printArray();
-        pq.add("5", 3);pq.printArray();
-        pq.add("2", 2);pq.printArray();
-        pq.add("3", 3);pq.printArray();
-        pq.add("6", 1);pq.printArray();
-        pq.pop();pq.printArray();
-        pq.add("3", 3);pq.printArray();
-        //pq.remove("1");
-        pq.remove("3");pq.printArray();
-        pq.isEmpty();
-    }
-
-    //converts the priority queue into a string array of the value parameter
+    // Converts the priority queue into a string array of the value properties of each element object
     public String[] asArray()
     {
         ArrayList<String> a = new ArrayList<String>();
         Element e = front;
 
         while (e != null)
-        {//Iterate through elements adding to the array
+        { // Iterate through elements adding to the array
             a.add(e.Value());
             e = e.getNext();
         }
@@ -40,62 +22,66 @@ public class PriorityQueue
         return a.toArray(new String[a.size()]);
     }
 
+    // Converts the priority queue into a an Array List
     public void printArray()
-    {//Converts the priority queue into a an Array List
+    {
         Element e = front;
 
         while (e != null)
-        {//Iterate through elements adding to the array
+        {// Iterate through elements adding to the array
             System.out.print(e);
             e = e.getNext();
         }
         System.out.println();
     }
 
-    //return if the queue is empty
+    // Return true if the queue is empty
     public boolean isEmpty()
     {
         return length == 0;
     }
 
-    //add item of specified priority
+    // Add item of specified priority
     public void add(String value, int priority)
     {
         Element right = front;
         Element left;
 
         if (front == null)
-        {//edge case for 0 items
+        { // Edge case for 0 items, sets front as new element
             front = new Element(value, null, null, priority);
             length++;
             return;
         }
         else if(front.getNext() == null)
-        {//edge case for 1 item
-            Element newNode = new Element(value, front, null, priority);
-            front.setNext(newNode);
+        { // Edge case for 1 item, sets new element as front or back depending on priority
+            if (priority < front.getPriority()) 
+            {
+                Element newNode = new Element(value, null, front, priority);
+                front.setPrevious(newNode);
+                front = newNode;
+            }
+            else 
+            {
+                Element newNode = new Element(value, front, null, priority);
+                front.setNext(newNode);
+            }
+            
             length++;
             return;
         }
 
         while (right.getNext() != null && right.getPriority() <= priority)
-        {//Find where to insert
+        { // Find where to insert
             right = right.getNext();
         }
 
+        // Create new element
         left = right.getPrevious();
-
         Element newNode = new Element(value, left, right, priority);
 
-        if(left == null)
-        {
-            front = newNode;
-        }
-        else
-        {
-            left.setNext(newNode);
-        }
-
+        // Update pointers
+        left.setNext(newNode);
         if(right != null)
         {
             right.setPrevious(newNode);
@@ -104,17 +90,17 @@ public class PriorityQueue
         length ++;
     }
 
-    //remove an element, if element not present throws error
+    // Remove an element, if element not present throws error
     public String remove(String value)
     {
-        //remove the first element that has a matching value, and reorganise the queue
-        //throw an error if the value is not present
+        // Remove the first element that has a matching value, and reorganise the queue
+        // Throw an error if the value is not present
         Element current = front;
         Element left;
         Element right;
 
-        //iterate through elements in the LinkedList
-        while (! current.Value().equals(value))
+        // Iterate through elements in the LinkedList
+        while (!current.Value().equals(value))
         {
             if(current.getNext() == null)
             {
@@ -126,10 +112,11 @@ public class PriorityQueue
             }
         }
 
+        // Prepare left and right pointers
         right = current.getNext();
         left = current.getPrevious();
 
-        //if theres a left neighbor, update next. if not update the front
+        // If theres a left neighbor, update next. If not update the front
         if (left != null)
         {
             left.setNext(right);
@@ -139,8 +126,7 @@ public class PriorityQueue
             front = right;
         }
 
-
-        //if theres a right neighbor, update previous
+        // If theres a right neighbor, update previous
         if (right != null)
         {
             right.setPrevious(left);
@@ -150,23 +136,23 @@ public class PriorityQueue
         return current.Value();
     }
 
-    //return and remove the 1st element from the queue and reorganise the queue, throws an error if the queue is empty
+    // Return and remove the 1st element from the queue and reorganise the queue, throws an error if the queue is empty
     public String pop()
     {
-        //throw an error if the queue is empty
+        // Throw an error if the queue is empty
         if(length == 0)
         {
             throw new UnsupportedOperationException();
         }
 
-        //store value to return later
+        // Store value to return later
         String value = front.Value();
 
-        //update front
+        // Update front
         front = front.getNext();
 
-        //set previous pointer to null as this is the new front
-        if(front != null)
+        // Set previous pointer to null as this is the new front
+        if(front != null) // Check for edge case of popping from 1 element queue
         {
             front.setPrevious(null);
         }
@@ -175,29 +161,30 @@ public class PriorityQueue
         return value;
     }
 
-    //return the 1st element from the queue (without removing it)
+    // Return the 1st element from the queue (without removing it)
     public String peek()
     {
         return front.Value();
     }
 
+    // Returns the priority of a specified value (or the first instance if the value occurs multiple times), returns -1 if not present
     public int getPriority(String value)
     {
-        //search pq for value
+        // Search pq for value
         for(Element e = front; e != null; e = e.getNext())
         {
-            //if value is present, return it
+            // If value is present, return it
             if(e.Value().equals(value))
             {
                 return e.getPriority();
             }
         }
 
-        //if not present, return error
+        // If not present, return error
         return -1;
     }
 
-    //returns size of priority queue
+    // Returns size of priority queue
     public int size()
     {
         int size = 0;
@@ -206,7 +193,7 @@ public class PriorityQueue
         {
             Element current = front;
 
-            //loop through entire queue, iterating size for each visited element
+            // Loop through entire queue, iterating size for each visited element
             while(current.getNext()!= null)
             {
                 current = current.getNext();
