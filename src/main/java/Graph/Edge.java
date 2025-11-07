@@ -1,6 +1,6 @@
 package Graph;
 
-//used for storage of an edges attributes (direction and weight)
+// Used for storage of an edges attributes (destination (direction) and weight)
 public class Edge
 {
     String destinationNode;

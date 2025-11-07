@@ -2,13 +2,13 @@ package Graph;
 
 import java.util.ArrayList;
 
-//used to store a list of edges that a node has
+// Used to store a list of edges that a node has
 public class Node
 {
-    private String nodeName;//name of the node
-    private ArrayList<Edge> adjacencyList = new ArrayList<Edge>();//stores all edges to this node
+    private String nodeName; // Name of the node
+    private ArrayList<Edge> adjacencyList = new ArrayList<Edge>(); // Stores all edges to this node
 
-    //constructor to set nodeName
+    // Constructor to set nodeName
     public Node(String nodeName)
     {
         this.nodeName = nodeName;
@@ -19,6 +19,7 @@ public class Node
         adjacencyList.add(edge);
     }
 
+    // Outputs the all of the node's edges as a string, seperated by commas
     @Override
     public String toString()
     {
@@ -43,10 +44,10 @@ public class Node
         return nodeName;
     }
 
-    //gets weight of edge between two nodes, if edge not present it throws an error
+    // Gets weight of edge between two nodes, if edge not present it throws an error
     public int getEdgeWeight(String destination)
     {
-        //searches through the nodes to find the destination, then returns the distance to it
+        // Searches through the nodes to find the destination, then returns the distance to it
         for(int i = 0; i < adjacencyList.size(); i++)
         {
             if(adjacencyList.get(i).getDestination() == destination)
@@ -58,12 +59,12 @@ public class Node
         throw new IllegalArgumentException("Edge not present");
     }
 
-    //returns a string array of the nodes neighbours
+    // Returns a string array of the nodes neighbours
     public String[] getNeighbours()
     {
         String[] neighbours = new String[adjacencyList.size()];
 
-        //add all edges to the array
+        // Add all edges to the array
         for(int i = 0; i < adjacencyList.size(); i++)
         {
             neighbours[i] = adjacencyList.get(i).getDestination();
