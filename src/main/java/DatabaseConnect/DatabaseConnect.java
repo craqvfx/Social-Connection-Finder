@@ -365,8 +365,8 @@ public class DatabaseConnect implements IDatabaseConnect
         try
         {
             stmt = conn.createStatement();
-            String sql = "INSERT INTO Company (ID,Name) "
-                    + "VALUES (" + company.ID() +", '" + company.Name() + "');";
+            String sql = "INSERT INTO Company (Name, IndustryID) "
+                    + "VALUES ('" + company.Name() +"', '" + company.IndustryID() + "');";
             stmt.executeUpdate(sql);
 
             stmt.close();
