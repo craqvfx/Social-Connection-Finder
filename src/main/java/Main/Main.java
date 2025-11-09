@@ -7,11 +7,9 @@ import Graph.*;
 import java.util.Scanner;
 
 /*
- * Main class to run the program.
- * Handles user interface and interaction.
- * Note: This class is a work in progress and some features are not yet implemented.
- * Sparsely commented as most of the code is self-explanatory or simple (e.g. cli menus).
- */
+Main class to run the program.
+Handles user interface and interaction.
+*/
 
 public class Main
 {
@@ -20,8 +18,8 @@ public class Main
 
     public static void main(String[] args)
     {
-        User user = WelcomeScreen();
-        HomeScreen(user);
+        User user = WelcomeScreen(); // Prompts user to login or register
+        HomeScreen(user); // Main program loop after login
     }
 
     private static User WelcomeScreen()
@@ -37,6 +35,7 @@ public class Main
             System.out.println("2 | Register");
             System.out.println("3 | Exit");
             choice = in.nextInt();
+            in.nextLine(); // Consume leftover newline
         } while(choice < 1 || choice > 3);
 
         switch (choice)
@@ -67,9 +66,12 @@ public class Main
         String email;
         String password;
         User currentUser = null;
+
         boolean success = false;
         while(success == false)
         {
+
+            // Get email and password input
             do
             {
                 System.out.println("Please enter your email:");
@@ -82,6 +84,7 @@ public class Main
                 password = in.nextLine();
             } while(password.isEmpty());
 
+            // Verify login credentials
             try
             {
                 DatabaseConnect conn = new DatabaseConnect();
@@ -112,6 +115,7 @@ public class Main
         boolean success = false;
         while(success == false)
         {
+            // Get name, email, and password input
             do
             {
                 System.out.println("Please enter your name:");
@@ -141,6 +145,7 @@ public class Main
                 
             } while(password.isEmpty());
 
+            // Attempt to register user
             register(name, email, password);
             success = true; // If registration fails, an exception is thrown and this line is not reached
         }
@@ -151,14 +156,18 @@ public class Main
         User user = null;
         try
         {
+            // Attempt to add user to database
             user = new User(name, email, password);
             DatabaseConnect conn = new DatabaseConnect();
             boolean added = conn.addUser(user);
+
+            // Output result of registration attempt
             if (added) {
                 System.out.println("Registration successful!");
             } else {
                 System.out.println("Registration failed: User not added.");
             }
+
             conn.close();
         }
         catch (Exception e)
@@ -181,7 +190,7 @@ public class Main
             System.out.println("4 | Logout");
             System.out.println("5 | Exit");
             choice = in.nextInt();
-            in.nextLine();
+            in.nextLine(); // Consume leftover newline
         } while(choice < 1 || choice > 5);
 
         switch (choice)
@@ -225,6 +234,7 @@ public class Main
             System.out.println("2 | Search Users by Company");
             System.out.println("3 | Return to Home Screen");
             choice = in.nextInt();
+            in.nextLine(); // Consume leftover newline
         } while(choice < 1 || choice > 3);
 
         DatabaseConnect conn = new DatabaseConnect();
@@ -236,19 +246,23 @@ public class Main
             case 1:
                 System.out.println("--- Search Users by Industry ---");
 
+                // Select industry and output users in that industry
                 int industryID;
                 do
                 {
                     success = true;
                     System.out.println("Please choose one of the following industries by entering it's corresponding number:");
 
+                    // Output industry list
                     String[] industryList = conn.getIndustryList();
                     for(String industry : industryList) 
                     {
                         System.out.println(industry);
                     }
                     industryID = in.nextInt();
-                    in.nextLine(); // consume leftover newline
+                    in.nextLine(); // Consume leftover newline
+
+                    // Validate industry choice
                     if(!conn.IDExists("Industry", industryID))
                     {
                         System.out.println("The Industry ID you entered does not exist, please try again.");
@@ -265,6 +279,7 @@ public class Main
 
                 } while(!success);
 
+                // Select user
                 do
                 {
                     success = true;
@@ -272,12 +287,12 @@ public class Main
                     System.out.println("Friend Code | Name");
 
                     String[] userList = conn.getUsersByIndustry(industryID);
-                    for(String user : userList) // output all users in the selected industry
+                    for(String user : userList) // Output all users in the selected industry
                     {
                         System.out.println(user);
                     }
-                    targetID = in.nextInt(); // get user input for connection to find
-                    in.nextLine(); // consume leftover newline
+                    targetID = in.nextInt(); // Get user input for connection to find
+                    in.nextLine(); // Consume leftover newline
 
                     // Check if targetID is in userList
                     boolean foundInList = false;
@@ -294,6 +309,7 @@ public class Main
                         }
                     }
 
+                    // Validate user choice
                     if (!foundInList)
                     {
                         System.out.println("The Friend Code you entered was not in the user list, please try again.");
@@ -312,6 +328,7 @@ public class Main
             case 2:
                 System.out.println("--- Search Users by Company ---");
 
+                // Select company and output users in that company
                 int companyID;
                 success = true;
                 do
@@ -319,14 +336,16 @@ public class Main
                     success = true;
                     System.out.println("Please choose one of the following companies by entering it's corresponding number:");
 
+                    // Output company list
                     String[] companyList = conn.getCompanyList();
                     for(String company : companyList) 
                     {
                         System.out.println(company);
                     }
                     companyID = in.nextInt();
-                    in.nextLine(); // consume leftover newline
+                    in.nextLine(); // Consume leftover newline
 
+                    // Validate company choice
                     if(!conn.IDExists("Company", companyID))
                     {
                         System.out.println("The Company ID you entered does not exist, please try again.");
@@ -343,6 +362,7 @@ public class Main
 
                 } while(!success);
 
+                // Select user
                 do
                 {
                     success = true;
@@ -351,13 +371,13 @@ public class Main
 
                     String[] userList = conn.getUsersByCompany(companyID);
 
-                    for(String user : userList) // output all users in the selected company
+                    for(String user : userList) // Output all users in the selected company
                     {
                         System.out.println(user);
                     }
 
-                    targetID = in.nextInt(); // get user input for connection to find
-                    in.nextLine(); // consume leftover newline
+                    targetID = in.nextInt(); // Get user input for connection to find
+                    in.nextLine(); // Consume leftover newline
 
                     // Check if targetID is in userList
                     boolean foundInList = false;
@@ -374,6 +394,7 @@ public class Main
                         }
                     }
 
+                    // Validate user choice
                     if (!foundInList)
                     {
                         System.out.println("The Friend Code you entered was not in the user list, please try again.");
@@ -398,12 +419,18 @@ public class Main
                 System.exit(1);
         }
         
+        // Find and print shortest path using Dijkstra's algorithm
+
+        // Load graph from database and initialize Dijkstra object with it
         Graph graph = new Graph();
         conn.loadGraph(graph);
         Dijkstra dijkstra = new Dijkstra(graph);
+
+        // Print shortest path from currentUser to targetID
         System.out.println("Finding shortest path from " + currentUser.Name() + " to " + conn.getUser(targetID).Name() + "...");
         dijkstra.printPath(currentUser.Name(), conn.getUser(targetID).Name());
         System.out.println();
+
         conn.close();
     }
 
@@ -418,6 +445,7 @@ public class Main
             System.out.println("3 | View Connections");
             System.out.println("4 | Return to Home Screen");
             choice = in.nextInt();
+            in.nextLine(); // Consume leftover newline
         } while(choice < 1 || choice > 3);
 
         DatabaseConnect conn = new DatabaseConnect();
@@ -425,16 +453,19 @@ public class Main
         switch (choice)
         {
             case 1:
-                int weight;
                 System.out.println("--- Add new Connection ---");
 
+                int weight;
+
+                // Get target user ID
                 boolean success = true;
                 do {
                     System.out.println("Please input the Friend Code of the person you want to connect to:");
 
                     targetID = in.nextInt();
-                    in.nextLine(); // consume leftover newline
+                    in.nextLine(); // Consume leftover newline
 
+                    // Validate and verify targetID
                     if (!conn.IDExists("User", targetID)) 
                     {
                         System.out.println("Error: User indicated by Friend Code doesn't exist, please try again.");
@@ -446,11 +477,11 @@ public class Main
                     else if(conn.connectionExists(currentUser.ID(), targetID))
                     {
                         System.out.println("Error: You already have a connection with this user. Please enter a different Friend Code.");
-                        targetID = -1; // force loop to continue
+                        targetID = -1; // Force loop to continue
                     }
                     else 
                     {
-                        //If we reach here, the input is valid. Now we verify the user is happy with it
+                        // If we reach here, the input is valid. Now we verify the user is happy with it
                         System.out.println("You have selected the user:\n" + targetID + " | " + conn.getUser(targetID).Name());
                         System.out.println("Was this correct? (y/n)");
                         String confirmation = in.nextLine().trim().toLowerCase();
@@ -466,33 +497,37 @@ public class Main
                     }
                 } while(!success);
 
+                // Get connection strength
                 do {
                     System.out.println("Please rank the strength of your connection out of 5, 1 being strongest and 5 being weakest:");
                     weight = in.nextInt();
-                    in.nextLine(); // consume leftover newline
+                    in.nextLine(); // Consume leftover newline
                 } while(weight < 1 || weight > 5);
 
+                // Add connection to database
                 conn.addConnection(currentUser.ID(), targetID, weight);
                 System.out.println("Connection added successfully!");
                 break;
             case 2:
                 System.out.println("--- Delete Connection ---");
                 
+                // Get target user ID
                 do
                 {
                     System.out.println("Please choose one of the following connections by entering the User's corresponding Friend Code:");
                     System.out.println("Friend Code | Name");
 
                     String[] connectionList = conn.getConnectionList(currentUser);
-                    for(String connection : connectionList) // output current connections
+                    for(String connection : connectionList) // Output current connections
                     {
                         System.out.println(connection);
                     }
-                    targetID = in.nextInt(); // get user input for connection to delete
+                    targetID = in.nextInt(); // Get user input for connection to delete
 
-                    in.nextLine(); // consume leftover newline
+                    in.nextLine(); // Consume leftover newline
                 } while(!conn.IDExists("Connections", targetID));
 
+                // Delete connection from database
                 conn.deleteConnection(currentUser.ID(), targetID);
                 System.out.println("Connection deleted successfully!");
                 break;
@@ -502,8 +537,9 @@ public class Main
                 System.out.println("Here are your current connections:");
                 System.out.println("Friend Code | Name");
 
+                // Output current connections
                 String[] connectionList = conn.getConnectionList(currentUser);
-                for(String connection : connectionList) // output current connections
+                for(String connection : connectionList) // Output current connections
                 {
                     System.out.println(connection);
                 }
@@ -531,7 +567,7 @@ public class Main
             System.out.println("4 | Update Company");
             System.out.println("5 | Return to Home Screen");
             choice = in.nextInt();
-            in.nextLine(); // consume leftover newline
+            in.nextLine(); // Consume leftover newline
         } while(choice < 1 || choice > 5);
 
         DatabaseConnect conn = new DatabaseConnect();
@@ -540,70 +576,91 @@ public class Main
             case 1:
                 System.out.println("--- Update Email ---");
                 String email;
+
+                // Get new email
                 do
                 {
                     System.out.println("Please enter a new email:");
                     email = in.nextLine();
                 } while(email.isEmpty());
 
+                // Update email in database
                 conn.modifyEmail(currentUser.ID(), email);
 
+                // Update email in currentUser object
                 currentUser.setEmail(email);
                 break;
             case 2:
                 System.out.println("--- Update Password ---");
                 String password;
+
+                // Get new password
                 do
                 {
                     System.out.println("Please enter a new password:");
                     password = in.nextLine();
                 } while(password.isEmpty());
                 
+                // Update password in database
                 conn.modifyPassword(currentUser.ID(), password);
 
+                // Update password in currentUser object
                 currentUser.setPassword(password);
                 break;
             case 3:
                 System.out.println("--- Update Name ---");
                 String name;
+
+                // Get new name
                 do
                 {
                     System.out.println("Please enter a new name:");
                     name = in.nextLine();
                 } while(name.isEmpty());
 
+                // Update name in database
                 conn.modifyName(currentUser.ID(), name);
 
+                // Update name in currentUser object
                 currentUser.setName(name);
                 break;
             case 4:
                 System.out.println("--- Update Company ---");
                 int companyID;
+
+                // Get new company
                 do
                 {
                     System.out.println("Please choose one of the following companies by entering it's corresponding number:");
                     System.out.println("0 | Register new Company");
 
+                    // Output company list
                     String[] companyList = conn.getCompanyList();
                     for(String company : companyList) 
                     {
                         System.out.println(company);
                     }
+
+                    // Get user input for company
                     companyID = in.nextInt();
-                    in.nextLine(); // consume leftover newline
+                    in.nextLine(); // Consume leftover newline
                 } while(!conn.IDExists("Company", companyID) && companyID != 0); // 0 is valid input to register a new company
 
+                // If user chose to register a new company, get company details and attempt to register it
                 if(companyID == 0)
                 {
                     System.out.println("--- Register new Company ---");
                     String companyName;
                     int industryID;
+
+                    // Get new company name
                     do
                     {
                         System.out.println("Please enter the new company's name:");
                         companyName = in.nextLine();
                     } while(companyName.isEmpty());
 
+                    // Select industry for new company
                     do
                     {
                         System.out.println("Please choose one of the following industries by entering it's corresponding number:");
@@ -615,10 +672,11 @@ public class Main
                         }
 
                         industryID = in.nextInt();
-                        in.nextLine(); // consume leftover newline
+                        in.nextLine(); // Consume leftover newline
 
                     } while(!conn.IDExists("industry", industryID));
 
+                    // Attempt to register new company
                     Company newCompany = null;
                     try
                     {
@@ -636,11 +694,11 @@ public class Main
                         System.out.println("Company registration failed: " + e.getMessage());
                     }
                 }
+                // No else is needed as after updating companyID if a new company was created, it auto selects the newly created company. If no new company was created, the user selected an existing company
 
-                // no else is needed as after updating companyID if a new company was created, it auto selects the newly created company, if no new company was created, the user selected an existing company
+                // Update company in database
                 conn.modifyCompanyID(currentUser.ID(), companyID);
                 currentUser.setCompanyID(companyID);
-
                 break;
             case 5:
                 System.out.println("Returning to Home Screen...");
@@ -650,6 +708,7 @@ public class Main
                 System.exit(1);
         }
 
+         //
         conn.close();
     }
 }
