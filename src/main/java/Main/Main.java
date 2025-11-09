@@ -420,16 +420,18 @@ public class Main
         }
         
         // Find and print shortest path using Dijkstra's algorithm
+        if(choice != 3) // If user chose to return to home screen, skip pathfinding
+        {
+            // Load graph from database and initialize Dijkstra object with it
+            Graph graph = new Graph();
+            conn.loadGraph(graph);
+            Dijkstra dijkstra = new Dijkstra(graph);
 
-        // Load graph from database and initialize Dijkstra object with it
-        Graph graph = new Graph();
-        conn.loadGraph(graph);
-        Dijkstra dijkstra = new Dijkstra(graph);
-
-        // Print shortest path from currentUser to targetID
-        System.out.println("Finding shortest path from " + currentUser.Name() + " to " + conn.getUser(targetID).Name() + "...");
-        dijkstra.printPath(currentUser.Name(), conn.getUser(targetID).Name());
-        System.out.println();
+            // Print shortest path from currentUser to targetID
+            System.out.println("Finding shortest path from " + currentUser.Name() + " to " + conn.getUser(targetID).Name() + "...");
+            dijkstra.printPath(currentUser.Name(), conn.getUser(targetID).Name());
+            System.out.println();
+        }
 
         conn.close();
     }
@@ -446,7 +448,7 @@ public class Main
             System.out.println("4 | Return to Home Screen");
             choice = in.nextInt();
             in.nextLine(); // Consume leftover newline
-        } while(choice < 1 || choice > 3);
+        } while(choice < 1 || choice > 4);
 
         DatabaseConnect conn = new DatabaseConnect();
         int targetID;
@@ -544,6 +546,7 @@ public class Main
                     System.out.println(connection);
                 }
                 System.out.println();
+
                 break;
             case 4:
                 System.out.println("Returning to Home Screen...");
@@ -552,6 +555,7 @@ public class Main
                 System.out.println("Error: Invalid choice. Exiting...");
                 System.exit(1);
         }
+
         conn.close();
     }
 
@@ -708,7 +712,6 @@ public class Main
                 System.exit(1);
         }
 
-         //
         conn.close();
     }
 }
