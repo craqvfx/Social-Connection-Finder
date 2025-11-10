@@ -81,7 +81,15 @@ public class PriorityQueue
         Element newNode = new Element(value, left, right, priority);
 
         // Update pointers
-        left.setNext(newNode);
+        if(left == null)
+        {
+            front = newNode;
+        }
+        else
+        {
+            left.setNext(newNode);
+        }
+        
         if(right != null)
         {
             right.setPrevious(newNode);
