@@ -1,5 +1,11 @@
 package DatabaseConnect;
 
+/*
+ * Company class representing Company table in DB
+ * For database storage and retrieval
+ * Stores ID, Name, and IndustryID
+ */
+
 public class Company
 {
     private Integer ID;

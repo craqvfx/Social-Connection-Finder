@@ -2,6 +2,11 @@ package DatabaseConnect;
 
 import Graph.Graph;
 
+/*
+ * Interface for database connection and operations
+ * Defines methods for user management, connection management, company management, and data retrieval
+ */
+
 public interface IDatabaseConnect 
 {
     public void close();

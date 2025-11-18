@@ -1,5 +1,11 @@
 package DatabaseConnect;
 
+/*
+ * User class representing User and LoginInfo tables in DB
+ * For database storage and retrieval
+ * Stores ID, Name, CompanyID, Email, and Password
+ */
+
 public class User
 {
     private Integer ID;
